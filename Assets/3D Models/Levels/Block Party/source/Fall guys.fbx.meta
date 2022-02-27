@@ -1,0 +1,213 @@
+fileFormatVersion: 2
+guid: dac45d8cf30620d4cba790e4c93ba6e9
+ModelImporter:
+  serializedVersion: 21202
+  internalIDToNameTable:
+  - first:
+      74: 8440248360967096626
+    second: Camera|CameraAction
+  - first:
+      74: -300738737519976610
+    second: Camera|Cube.001Action
+  - first:
+      74: 7199037234577527760
+    second: Camera|CubeAction
+  - first:
+      74: 6635711865944940851
+    second: Camera|Plane.002Action.001
+  - first:
+      74: 421932215561131594
+    second: Camera|Plane.006Action.001
+  - first:
+      74: 7120683688208465936
+    second: Camera|Shader NodetreeAction
+  - first:
+      74: -7872000328814173550
+    second: Pushing Blocks Blue|CameraAction
+  - first:
+      74: 2485022762013455520
+    second: Pushing Blocks Blue|Cube.001Action
+  - first:
+      74: -8135830226233278633
+    second: Pushing Blocks Blue|CubeAction
+  - first:
+      74: -886921242237930127
+    second: Pushing Blocks Blue|Plane.002Action.001
+  - first:
+      74: -5284144403107449226
+    second: Pushing Blocks Blue|Plane.006Action.001
+  - first:
+      74: 1723903204284692927
+    second: Pushing Blocks Blue|Shader NodetreeAction
+  - first:
+      74: -5373703420117563279
+    second: Slime|CameraAction
+  - first:
+      74: 1715143903490631041
+    second: Slime|Cube.001Action
+  - first:
+      74: 6797934080333583966
+    second: Slime|CubeAction
+  - first:
+      74: -524550201360191055
+    second: Slime|Plane.002Action.001
+  - first:
+      74: 2437509932172163902
+    second: Slime|Plane.006Action.001
+  - first:
+      74: -1565518476542304684
+    second: Slime|Shader NodetreeAction
+  - first:
+      74: 6449588803028772140
+    second: Pushing Blocks Purple|CameraAction
+  - first:
+      74: -8759261394380488624
+    second: Pushing Blocks Purple|Cube.001Action
+  - first:
+      74: -5986065696542683633
+    second: Pushing Blocks Purple|CubeAction
+  - first:
+      74: -8111660232202638878
+    second: Pushing Blocks Purple|Plane.002Action.001
+  - first:
+      74: 3797003235945571420
+    second: Pushing Blocks Purple|Plane.006Action.001
+  - first:
+      74: 2868801785202064208
+    second: Pushing Blocks Purple|Shader NodetreeAction
+  - first:
+      74: 4677371705986153481
+    second: Cube|CameraAction
+  - first:
+      74: 9036694105013053538
+    second: Cube|Cube.001Action
+  - first:
+      74: -3999578356269874737
+    second: Cube|CubeAction
+  - first:
+      74: 4556718408106801908
+    second: Cube|Plane.002Action.001
+  - first:
+      74: 8771437818981574465
+    second: Cube|Plane.006Action.001
+  - first:
+      74: 7869579155339608498
+    second: Cube|Shader NodetreeAction
+  - first:
+      74: -1489832937513433573
+    second: Cube.001|CameraAction
+  - first:
+      74: -8515560403302317629
+    second: Cube.001|Cube.001Action
+  - first:
+      74: 17017395923089283
+    second: Cube.001|CubeAction
+  - first:
+      74: -223134915154555604
+    second: Cube.001|Plane.002Action.001
+  - first:
+      74: 5904978401990990206
+    second: Cube.001|Plane.006Action.001
+  - first:
+      74: 6811843325399911832
+    second: Cube.001|Shader NodetreeAction
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 0
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
