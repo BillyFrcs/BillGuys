@@ -13,11 +13,13 @@ namespace Player
             public static String movement = "Movement";
             public static String run = "Run";
             public static String jump = "Jump";
+            public static String jumpOnTake = "Jump On Take";
+            public static String longSlide = "Long Slide";
             public static String dance = "Dance";
-            public static String slide = "Slide";
-            public static String die = "Die";
+            public static String dizzy = "Dizzy";
             public static String punch = "Punch";
             public static String kick = "Kick";
+            public static String victory = "Victory";
         }
         
         public static PlayerAnimation Instance;
@@ -122,13 +124,41 @@ namespace Player
         /// Playing slide animation
         /// </summary>
         /// <param name="jumpCounter">Int32</param>
-        public void SlideAnimation(Int32 jumpCounter)
+        public void JumpOnTakeAnimation(Int32 jumpCounter)
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var slideAnimation = Animator.StringToHash(ParameterAnimator.slide);
+                var jumpOnTakeAnimation = Animator.StringToHash(ParameterAnimator.jumpOnTake);
 
-                PlayerAnimator.SetInteger(slideAnimation, jumpCounter);
+                PlayerAnimator.SetInteger(jumpOnTakeAnimation, jumpCounter);
+            }
+        }
+        
+        /// <summary>
+        /// Playing short slide animation
+        /// </summary>
+        /// <param name="jumpCounter">Int32</param>
+        public void ShortSlideAnimation(Int32 jumpCounter)
+        {
+            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            {
+                var shortSlideAnimation = Animator.StringToHash(ParameterAnimator.jumpOnTake);
+
+                PlayerAnimator.SetInteger(shortSlideAnimation, jumpCounter);
+            }
+        }
+        
+        /// <summary>
+        /// Playing long slide animation
+        /// </summary>
+        /// <param name="jumpCounter">Int32</param>
+        public void LongSlideAnimation(Int32 jumpCounter)
+        {
+            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            {
+                var longSlideAnimation = Animator.StringToHash(ParameterAnimator.longSlide);
+
+                PlayerAnimator.SetInteger(longSlideAnimation, jumpCounter);
             }
         }
 
@@ -154,15 +184,15 @@ namespace Player
         }
         
         /// <summary>
-        /// Playing die animation
+        /// Playing dizzy animation
         /// </summary>
-        public void DieAnimation()
+        public void DizzyAnimation()
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var dieAnimation = Animator.StringToHash(ParameterAnimator.die);
+                var dizzyAnimation = Animator.StringToHash(ParameterAnimator.dizzy);
 
-                PlayerAnimator.SetTrigger(dieAnimation);
+                PlayerAnimator.SetTrigger(dizzyAnimation);
             }
         }
 
@@ -189,6 +219,19 @@ namespace Player
                 var kickAnimation = Animator.StringToHash(ParameterAnimator.kick);
 
                 PlayerAnimator.SetTrigger(kickAnimation);
+            }
+        }
+
+        /// <summary>
+        /// Playing victory animation
+        /// </summary>
+        public void VictoryAnimation()
+        {
+            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            {
+                var victoryAnimation = Animator.StringToHash(ParameterAnimator.victory);
+
+                PlayerAnimator.SetTrigger(victoryAnimation);
             }
         }
     }

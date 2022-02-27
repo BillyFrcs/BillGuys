@@ -3479,8 +3479,8 @@ MonoBehaviour:
   _movementSpeed: 5
   _runMovementSpeed: 6
   _rotationSpeed: 15
-  _maxJumpHeight: 5
-  _maxJumpTime: 0.75
+  _maxJumpHeight: 6
+  _maxJumpTime: 1
   _gravityMultiplier: 0.5
 --- !u!1 &2000938067018756692
 GameObject:
@@ -8372,7 +8372,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5535647648147389075}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: eeebdeb8be91e0e43ae9170c2d8e4279, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 0015bb6a51ba0864ab24d05830956c4f, type: 2}
   m_Controller: {fileID: 9100000, guid: f5e71d2eda3d6cc40857811c187df502, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0

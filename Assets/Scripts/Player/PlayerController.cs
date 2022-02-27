@@ -53,7 +53,7 @@ namespace Player
           // Gravity
           private float _gravity;
           private float _groundedGravity;
-          [Tooltip("Gravity Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier;
+          [Tooltip("Gravity Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 0.5f;
           
           // Control animation state
           private bool _isDance;
@@ -63,7 +63,7 @@ namespace Player
           // Constants ----------------------------------------------------------------
           private const int ZERO = 0;
           private const float FALL_DISTANCE = -50F;
-          private const float FALL_DIE = -20F;
+          private const float FALL_DIZZY = -20F;
 
           private void Awake()
           {
@@ -84,7 +84,7 @@ namespace Player
                _isJumpAnimating = false;
                _isDance = true;
                _isPunch = true;
-               _isKick = false;
+               _isKick = true;
 
                _gravity = -9.8F;
                _groundedGravity = -0.05F;
@@ -138,7 +138,7 @@ namespace Player
           }
 
           /// <summary>
-          /// Initialize player input action callback
+          /// Initialize the new player input system action callback
           /// </summary>
           private void PlayerInputCallback()
           {
@@ -278,15 +278,11 @@ namespace Player
                     {
                          // Run with high movement speed
                          _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
-                         
-                         _isKick = true;
                     }
                     else
                     {
                          // Run with default movement speed
                          _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
-
-                         _isKick = true;
                     }
 
                     RotatePlayerDirection();
@@ -338,9 +334,10 @@ namespace Player
 
                     _jumpCounter++;
                     
-                    PlayerAnimation.Instance.SlideAnimation(_jumpCounter);
-                    
-                    Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
+                    // PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
+                    PlayerAnimation.Instance.ShortSlideAnimation(_jumpCounter);
+
+                    // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter] * 0.5F;
                     _CurrentRunMovement.y = _InitialJumpVelocity[_jumpCounter] * 0.5F;
@@ -367,21 +364,21 @@ namespace Player
                float secondJumpVelocity = (2f * (_maxJumpHeight + 2f)) / (timeApex * 1.25f);
                
                // Use this if we're using 3 different type of animation state
-               // float thirdJumpGravity = (-2f * (_maxJumpHeight + 4f)) / Mathf.Pow((timeApex * 1.5f), 2f);
-               // float thirdJumpVelocity = (2f * (_maxJumpHeight + 4f)) / (timeApex * 1.25f);
+               float thirdJumpGravity = (-2f * (_maxJumpHeight + 4f)) / Mathf.Pow((timeApex * 1.5f), 2f);
+               float thirdJumpVelocity = (2f * (_maxJumpHeight + 4f)) / (timeApex * 1.25f);
                
                // Initial jump velocity
                _InitialJumpVelocity.Add(1, _jumpVelocity);
                _InitialJumpVelocity.Add(2, secondJumpVelocity);
                
-               // _InitialJumpVelocity.Add(3, thirdJumpVelocity);
+               _InitialJumpVelocity.Add(3, thirdJumpVelocity);
                
                // Initial jump gravity
                _JumpGravity.Add(0, _gravity);
                _JumpGravity.Add(1, _gravity);
                _JumpGravity.Add(2, secondJumpGravity);
                
-               // _JumpGravity.Add(3, thirdJumpGravity);
+               _JumpGravity.Add(3, thirdJumpGravity);
           }
 
           /// <summary>
@@ -406,11 +403,12 @@ namespace Player
 
                          _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine());
 
-                         if (_jumpCounter == 2)
+                         if (_jumpCounter == 3)
                          {
                               _jumpCounter = ZERO;
                               
-                              PlayerAnimation.Instance.SlideAnimation(_jumpCounter);
+                              // PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
+                              PlayerAnimation.Instance.ShortSlideAnimation(_jumpCounter);
                          }
                     }
 
@@ -471,9 +469,9 @@ namespace Player
                          // Debug.Log($"Player {gameObject.transform.name} falling"); // DEBUG
                     }
 
-                    if (_PlayerCharacterController.velocity.y < FALL_DIE)
+                    if (_PlayerCharacterController.velocity.y < FALL_DIZZY)
                     {
-                         PlayerAnimation.Instance.DieAnimation();
+                         PlayerAnimation.Instance.DizzyAnimation();
                          
                          // Debug.Log("Die animation"); // DEBUG
                     }
