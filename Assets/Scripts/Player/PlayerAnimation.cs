@@ -20,6 +20,7 @@ namespace Player
             public static String punch = "Punch";
             public static String kick = "Kick";
             public static String victory = "Victory";
+            public static String die = "Die";
         }
         
         public static PlayerAnimation Instance;
@@ -232,6 +233,21 @@ namespace Player
                 var victoryAnimation = Animator.StringToHash(ParameterAnimator.victory);
 
                 PlayerAnimator.SetTrigger(victoryAnimation);
+            }
+        }
+
+        /// <summary>
+        /// Playing die animation
+        /// </summary>
+        public void DieAnimation()
+        {
+            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            {
+                var dieAnimation = Animator.StringToHash(ParameterAnimator.die);
+                
+                PlayerAnimator.SetTrigger(dieAnimation);
+                
+                // Debug.Log("Die animation"); // DEBUG
             }
         }
     }
