@@ -139,7 +139,7 @@ namespace Player
         /// Playing double jump animation
         /// </summary>
         /// <param name="isPlayerDoubleJump">Boolean</param>
-        public void DoubleAnimation(Boolean isPlayerDoubleJump)
+        public void DoubleJumpAnimation(Boolean isPlayerDoubleJump)
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
