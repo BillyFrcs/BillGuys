@@ -34,7 +34,8 @@ namespace Editor
 
                 var path = GetConfigPath();
 
-                if (path == null) {
+                if (path == null) 
+                {
                     AssetDatabase.CreateAsset(CreateInstance<AutoSaveConfig>(), $"Assets/{nameof(AutoSaveConfig)}.asset");
                     
                     Debug.Log("A config file has been created at the root of your project.<b> You can move this anywhere you'd like.</b>");
