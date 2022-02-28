@@ -14,7 +14,7 @@ namespace Player
             public static String run = "Run";
             public static String jump = "Jump";
             public static String jumpOnTake = "Jump On Take";
-            public static String longSlide = "Long Slide";
+            public static String doubleJump = "Double Jump";
             public static String dance = "Dance";
             public static String dizzy = "Dizzy";
             public static String punch = "Punch";
@@ -134,32 +134,25 @@ namespace Player
                 PlayerAnimator.SetInteger(jumpOnTakeAnimation, jumpCounter);
             }
         }
-        
+
         /// <summary>
-        /// Playing short slide animation
+        /// Playing double jump animation
         /// </summary>
-        /// <param name="jumpCounter">Int32</param>
-        public void ShortSlideAnimation(Int32 jumpCounter)
+        /// <param name="isPlayerDoubleJump">Boolean</param>
+        public void DoubleAnimation(Boolean isPlayerDoubleJump)
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var shortSlideAnimation = Animator.StringToHash(ParameterAnimator.jumpOnTake);
+                var doubleJumpAnimation = Animator.StringToHash(ParameterAnimator.doubleJump);
 
-                PlayerAnimator.SetInteger(shortSlideAnimation, jumpCounter);
-            }
-        }
-        
-        /// <summary>
-        /// Playing long slide animation
-        /// </summary>
-        /// <param name="jumpCounter">Int32</param>
-        public void LongSlideAnimation(Int32 jumpCounter)
-        {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
-            {
-                var longSlideAnimation = Animator.StringToHash(ParameterAnimator.longSlide);
-
-                PlayerAnimator.SetInteger(longSlideAnimation, jumpCounter);
+                if (isPlayerDoubleJump == !false)
+                {
+                    PlayerAnimator.SetBool(doubleJumpAnimation, true);
+                }
+                else
+                {
+                    PlayerAnimator.SetBool(doubleJumpAnimation, false);
+                }
             }
         }
 
