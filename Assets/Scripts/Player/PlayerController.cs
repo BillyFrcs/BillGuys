@@ -27,9 +27,10 @@ namespace Player
           [Tooltip("Run Movement Speed Of Player Character")] [SerializeField] private float _runMovementSpeed;
           private Vector2 _CurrentMovementInput;
           private Vector3 _CurrentMovement;
+          private Vector3 _CurrentRunMovement;
+          private Vector3 _AppliedPlayerMovement;
           private bool _isMove;
           private bool _isMovementPressed;
-          private Vector3 _CurrentRunMovement;
           private bool _isRunPressed;
           
           [Header("Rotate Object Direction")]
@@ -53,7 +54,7 @@ namespace Player
           // Gravity
           private float _gravity;
           private float _groundedGravity;
-          [Tooltip("Gravity Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 0.5f;
+          [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 1.0f;
           
           // Control animation state
           private bool _isDance;
@@ -62,8 +63,8 @@ namespace Player
           
           // Constants ----------------------------------------------------------------
           private const int ZERO = 0;
-          private const float FALL_DISTANCE = -50F;
-          private const float FALL_DIZZY = -20F;
+          private const float FALL_DIZZY = -10F;
+          private const float FALL_DISTANCE = -40F;
 
           private void Awake()
           {
@@ -71,7 +72,7 @@ namespace Player
 
                _PlayerInputController = new PlayerInputSystemController();
                
-               PlayerInputCallback();
+               PlayerInputSystemActionCallback();
           }
 
           // Start is called before the first frame update
@@ -84,7 +85,7 @@ namespace Player
                _isJumpAnimating = false;
                _isDance = true;
                _isPunch = true;
-               _isKick = true;
+               _isKick = false;
 
                _gravity = -9.8F;
                _groundedGravity = -0.05F;
@@ -140,7 +141,7 @@ namespace Player
           /// <summary>
           /// Initialize the new player input system action callback
           /// </summary>
-          private void PlayerInputCallback()
+          private void PlayerInputSystemActionCallback()
           {
                // Movement input action
                _PlayerInputController.PlayerCharacterController.Movement.started += OnMovement;
@@ -256,12 +257,12 @@ namespace Player
           /// <param name="kickContext">InputAction.CallbackContext</param>
           public void OnKick(InputAction.CallbackContext kickContext)
           {
-               if (_isKick)
+               if (kickContext.performed)
                {
-                    if (kickContext.performed)
+                    if (_isKick)
                     {
                          PlayerAnimation.Instance.KickAnimation();
-                         
+
                          // Debug.Log(kickContext.performed); // DEBUG
                     }
                }
@@ -277,13 +278,24 @@ namespace Player
                     if (_isRunPressed)
                     {
                          // Run with high movement speed
-                         _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
+                         _AppliedPlayerMovement.x = _CurrentRunMovement.x;
+                         _AppliedPlayerMovement.z = _CurrentRunMovement.z;
+                         
+                         // _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
                     }
                     else
                     {
                          // Run with default movement speed
-                         _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
+                         _AppliedPlayerMovement.x = _CurrentMovement.x;
+                         _AppliedPlayerMovement.z = _CurrentMovement.z;
+                         
+                         // _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
+
+                         _isKick = true;
                     }
+                    
+                    // Move player character
+                    _PlayerCharacterController.Move(_AppliedPlayerMovement * Time.deltaTime);
 
                     RotatePlayerDirection();
 
@@ -339,8 +351,8 @@ namespace Player
 
                     // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
-                    _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter] * 0.5F;
-                    _CurrentRunMovement.y = _InitialJumpVelocity[_jumpCounter] * 0.5F;
+                    _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
+                    _AppliedPlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
                }
                else if (!_isJumpPressed && _isJumping && _PlayerCharacterController.isGrounded)
                {
@@ -387,14 +399,9 @@ namespace Player
           private void Gravity()
           {
                Boolean isFalling = _CurrentMovement.y <= 0.0f || !_isJumpPressed;
-
-               var fallMultiplier = 2.0f;
                
                if (_PlayerCharacterController.isGrounded)
                {
-                    _CurrentMovement.y = _groundedGravity;
-                    _CurrentRunMovement.y = _groundedGravity;
-                    
                     if (_isJumpAnimating == true)
                     {
                          PlayerAnimation.Instance.JumpAnimation(false);
@@ -411,31 +418,30 @@ namespace Player
                               PlayerAnimation.Instance.ShortSlideAnimation(_jumpCounter);
                          }
                     }
+                    
+                    _CurrentMovement.y = _groundedGravity;
+                    _AppliedPlayerMovement.y = _groundedGravity;
 
                     // Debug.Log($"{gameObject.name} is on the ground"); // DEBUG
                }
                else if (isFalling)
                {
                     var previousYVelocity = _CurrentMovement.y;
-                    var newYVelocity = _CurrentMovement.y + (_JumpGravity[_jumpCounter] * fallMultiplier * Time.deltaTime);
-
-                    // float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5F;
+                    
+                    _CurrentMovement.y = previousYVelocity + (_JumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
+                         
+                    // _AppliedMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
                     
                     // Optional next velocity of y with max value
-                    float nextYVelocity = Mathf.Max((previousYVelocity + newYVelocity) * 0.5F, -20.0F);
-
-                    _CurrentMovement.y = nextYVelocity;
-                    _CurrentRunMovement.y = nextYVelocity;
+                    _AppliedPlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
                }
                else
                {
                     var previousYVelocity = _CurrentMovement.y;
-                    var newYVelocity = _CurrentMovement.y + (_JumpGravity[_jumpCounter] * Time.deltaTime);
 
-                    float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5F;
+                    _CurrentMovement.y = previousYVelocity + (_JumpGravity[_jumpCounter] * Time.deltaTime);
 
-                    _CurrentMovement.y = nextYVelocity;
-                    _CurrentRunMovement.y = nextYVelocity;
+                    _AppliedPlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
                }
           }
 
@@ -458,27 +464,43 @@ namespace Player
           {
                if (TryGetComponent<Rigidbody>(out Rigidbody PlayerRb))
                {
-                    if (PlayerRb.position.y < FALL_DISTANCE)
-                    {
-                         // gameObject.transform.position = new Vector3(Mathf.Abs(13.5f), Mathf.Abs(-5f * Time.deltaTime), Mathf.Abs(1.5f));
+                    Vector3 PlayerPosition = PlayerRb.transform.position;
 
+                    // Vector3 PlayerPosition = _PlayerCharacterController.transform.position;
+
+                    // Reset velocity value
+                    if (_PlayerCharacterController.isGrounded)
+                    {
+                         PlayerPosition.y = ZERO;
+                         
+                         // Debug.LogAssertion(PlayerPosition.y); // DEBUG ASSERTION
+                    }
+
+                    if (PlayerPosition.y < FALL_DIZZY)
+                    {
+                         _isJump = false;
+
+                         PlayerRb.isKinematic = true;
+                         
+                         PlayerAnimation.Instance.DizzyAnimation();
+                         
+                         // Debug.Log("Player dizzy"); // DEBUG
+                    }
+
+                    if (PlayerPosition.y < FALL_DISTANCE)
+                    {
                          _isJump = false;
 
                          SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+                         
+                         PlayerAnimation.Instance.DieAnimation();
 
                          // Debug.Log($"Player {gameObject.transform.name} falling"); // DEBUG
-                    }
-
-                    if (_PlayerCharacterController.velocity.y < FALL_DIZZY)
-                    {
-                         PlayerAnimation.Instance.DizzyAnimation();
-                         
-                         // Debug.Log("Die animation"); // DEBUG
                     }
                }
                else
                {
-                    throw new System.Exception("Component hasn't been attached!");
+                    throw new System.NullReferenceException("Component hasn't been attached!");
                }
           }
      }
