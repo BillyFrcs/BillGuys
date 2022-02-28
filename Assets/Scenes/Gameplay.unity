@@ -3479,9 +3479,9 @@ MonoBehaviour:
   _movementSpeed: 5
   _runMovementSpeed: 6
   _rotationSpeed: 15
-  _maxJumpHeight: 6
-  _maxJumpTime: 1
-  _gravityMultiplier: 0.5
+  _maxJumpHeight: 2
+  _maxJumpTime: 0.75
+  _gravityMultiplier: 2
 --- !u!1 &2000938067018756692
 GameObject:
   m_ObjectHideFlags: 0
