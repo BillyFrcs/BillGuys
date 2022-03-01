@@ -36,7 +36,7 @@ namespace Player
           [Header("Rotate Object Direction")]
           [Tooltip("Rotation Speed To Rotate Player Direction")] [SerializeField] [Range(0, 20)] private float _rotationSpeed = 15f;
 
-          [Header("Jump Component")] 
+          [Header("Jump And Gravity Object")] 
           [Tooltip("Set Max Jump Height")] [SerializeField] [Range(0, 10)] private float _maxJumpHeight = 4.0f;
           [Tooltip("Set Max Jump Time")] [SerializeField] [Range(0, 10)] private float _maxJumpTime = 0.75f;
           private float _jumpVelocity;
@@ -44,10 +44,10 @@ namespace Player
           private bool _isJumpPressed;
           private bool _isJumping;
           private bool _isJumpAnimating;
-          
+
           // Trajectory jump velocity
           private Dictionary<int, float> _InitialJumpVelocity = new Dictionary<int, float>();
-          private Dictionary<int, float> _JumpGravity = new Dictionary<int, float>();
+          private Dictionary<int, float> _InitialJumpGravity = new Dictionary<int, float>();
           private Coroutine _CurrentJumpResetRoutine = null;
           private int _jumpCounter;
 
@@ -60,6 +60,9 @@ namespace Player
           private bool _isDance;
           private bool _isPunch;
           private bool _isKick;
+          
+          // Timer
+          private float _dieTimer;
           
           // Constants ----------------------------------------------------------------
           private const int ZERO = 0;
@@ -89,14 +92,14 @@ namespace Player
 
                _gravity = -9.8F;
                _groundedGravity = -0.05F;
+
+               _dieTimer = 2.0f;
           }
 
           // Update is called once per frame
           private void Update()
           {
                this.PlayerMovement();
-               
-               Gravity();
                
                this.PlayerJump();
                
@@ -320,9 +323,9 @@ namespace Player
 
                if (_isMovementPressed)
                {
-                    Quaternion PlayerRotation = Quaternion.LookRotation(PositionToLookAt);
+                    Quaternion PlayerRotation = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.deltaTime));
                     
-                    gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation, PlayerRotation, _rotationSpeed * Time.deltaTime);
+                    gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation, PlayerRotation, Mathf.Sin(_rotationSpeed * Time.deltaTime));
                }
           }
 
@@ -331,7 +334,11 @@ namespace Player
           /// </summary>
           private void PlayerJump()
           {
-               if (!_isJumping && _PlayerCharacterController.isGrounded && _isJumpPressed)
+               this.Gravity();
+               
+               var isPlayerGrounded = _PlayerCharacterController.isGrounded;
+               
+               if (!_isJumping && _isJumpPressed && isPlayerGrounded)
                {
                     if (_jumpCounter < 3 && _CurrentJumpResetRoutine != null)
                     {
@@ -339,24 +346,26 @@ namespace Player
                     }
                     
                     _isJumping = true;
-                    
+
                     PlayerAnimation.Instance.JumpAnimation(true);
                     
                     _isJumpAnimating = true;
 
                     _jumpCounter++;
-                    
-                    // PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-                    PlayerAnimation.Instance.ShortSlideAnimation(_jumpCounter);
 
+                    PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
+                    
                     // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
+                    // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
                     _AppliedPlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
                }
-               else if (!_isJumpPressed && _isJumping && _PlayerCharacterController.isGrounded)
+               else if (!_isJumpPressed && _isJumping && isPlayerGrounded)
                {
                     _isJumping = false;
+
+                    // print("Stop jumping: " + _isJumping); // PRINT
                }
           }
 
@@ -369,28 +378,26 @@ namespace Player
 
                _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
 
-               _jumpVelocity = (2f * _maxJumpHeight) / timeApex;
-               
+               // First jump velocity
+               _jumpVelocity = (2f * _maxJumpHeight) / timeApex * 1.25f;
+
                // Initialize trajectory jump velocity
-               float secondJumpGravity = (-2f * (_maxJumpHeight + 2f)) / Mathf.Pow((timeApex * 1.25f), 2f);
-               float secondJumpVelocity = (2f * (_maxJumpHeight + 2f)) / (timeApex * 1.25f);
+               float secondJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f);
+               float secondJumpGravity = (-2f * (_maxJumpHeight + 2f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
-               // Use this if we're using 3 different type of animation state
-               float thirdJumpGravity = (-2f * (_maxJumpHeight + 4f)) / Mathf.Pow((timeApex * 1.5f), 2f);
-               float thirdJumpVelocity = (2f * (_maxJumpHeight + 4f)) / (timeApex * 1.25f);
+               float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
+               float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
                // Initial jump velocity
                _InitialJumpVelocity.Add(1, _jumpVelocity);
                _InitialJumpVelocity.Add(2, secondJumpVelocity);
-               
                _InitialJumpVelocity.Add(3, thirdJumpVelocity);
                
                // Initial jump gravity
-               _JumpGravity.Add(0, _gravity);
-               _JumpGravity.Add(1, _gravity);
-               _JumpGravity.Add(2, secondJumpGravity);
-               
-               _JumpGravity.Add(3, thirdJumpGravity);
+               _InitialJumpGravity.Add(0, _gravity);
+               _InitialJumpGravity.Add(1, _gravity);
+               _InitialJumpGravity.Add(2, secondJumpGravity);
+               _InitialJumpGravity.Add(3, thirdJumpGravity);
           }
 
           /// <summary>
@@ -410,28 +417,28 @@ namespace Player
 
                          _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine());
 
+                         // Trajectory jump
                          if (_jumpCounter == 3)
                          {
                               _jumpCounter = ZERO;
                               
-                              // PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-                              PlayerAnimation.Instance.ShortSlideAnimation(_jumpCounter);
+                              PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
                          }
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
                     _AppliedPlayerMovement.y = _groundedGravity;
-
+                     
                     // Debug.Log($"{gameObject.name} is on the ground"); // DEBUG
                }
                else if (isFalling)
                {
                     var previousYVelocity = _CurrentMovement.y;
                     
-                    _CurrentMovement.y = previousYVelocity + (_JumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
+                    _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
                          
                     // _AppliedMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
-                    
+
                     // Optional next velocity of y with max value
                     _AppliedPlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
                }
@@ -439,7 +446,7 @@ namespace Player
                {
                     var previousYVelocity = _CurrentMovement.y;
 
-                    _CurrentMovement.y = previousYVelocity + (_JumpGravity[_jumpCounter] * Time.deltaTime);
+                    _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * Time.deltaTime);
 
                     _AppliedPlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
                }
@@ -491,8 +498,13 @@ namespace Player
                     {
                          _isJump = false;
 
-                         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
-                         
+                         _dieTimer -= Time.deltaTime;
+
+                         if (_dieTimer <= 0F)
+                         {
+                              SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+                         }
+
                          PlayerAnimation.Instance.DieAnimation();
 
                          // Debug.Log($"Player {gameObject.transform.name} falling"); // DEBUG

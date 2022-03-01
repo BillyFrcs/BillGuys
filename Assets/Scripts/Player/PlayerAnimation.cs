@@ -14,7 +14,6 @@ namespace Player
             public static String run = "Run";
             public static String jump = "Jump";
             public static String jumpOnTake = "Jump On Take";
-            public static String doubleJump = "Double Jump";
             public static String dance = "Dance";
             public static String dizzy = "Dizzy";
             public static String punch = "Punch";
@@ -132,27 +131,6 @@ namespace Player
                 var jumpOnTakeAnimation = Animator.StringToHash(ParameterAnimator.jumpOnTake);
 
                 PlayerAnimator.SetInteger(jumpOnTakeAnimation, jumpCounter);
-            }
-        }
-
-        /// <summary>
-        /// Playing double jump animation
-        /// </summary>
-        /// <param name="isPlayerDoubleJump">Boolean</param>
-        public void DoubleJumpAnimation(Boolean isPlayerDoubleJump)
-        {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
-            {
-                var doubleJumpAnimation = Animator.StringToHash(ParameterAnimator.doubleJump);
-
-                if (isPlayerDoubleJump == !false)
-                {
-                    PlayerAnimator.SetBool(doubleJumpAnimation, true);
-                }
-                else
-                {
-                    PlayerAnimator.SetBool(doubleJumpAnimation, false);
-                }
             }
         }
 
