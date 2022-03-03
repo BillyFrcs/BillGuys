@@ -37,8 +37,8 @@ namespace Player
           [Tooltip("Rotation Speed To Rotate Player Direction")] [SerializeField] [Range(0, 20)] private float _rotationSpeed = 15f;
 
           [Header("Jump And Gravity Object")] 
-          [Tooltip("Set Max Jump Height")] [SerializeField] [Range(0, 10)] private float _maxJumpHeight = 4.0f;
-          [Tooltip("Set Max Jump Time")] [SerializeField] [Range(0, 10)] private float _maxJumpTime = 0.75f;
+          [Tooltip("Set Max Jump Height")] [SerializeField] private float _maxJumpHeight = 4.0f;
+          [Tooltip("Set Max Jump Time")] [SerializeField] private float _maxJumpTime = 0.75f;
           private float _jumpVelocity;
           private bool _isJump;
           private bool _isJumpPressed;
@@ -106,6 +106,7 @@ namespace Player
                RespawnPlayer();
           }
 
+          // Fixed Update is used for physics calculation
           private void FixedUpdate()
           {
                // Calculate fast fall of player gravity
@@ -486,8 +487,6 @@ namespace Player
                     if (PlayerPosition.y < FALL_DIZZY)
                     {
                          _isJump = false;
-
-                         PlayerRb.isKinematic = true;
                          
                          PlayerAnimation.Instance.DizzyAnimation();
                          
@@ -497,6 +496,8 @@ namespace Player
                     if (PlayerPosition.y < FALL_DISTANCE)
                     {
                          _isJump = false;
+                         
+                         PlayerRb.isKinematic = true;
 
                          _dieTimer -= Time.deltaTime;
 
