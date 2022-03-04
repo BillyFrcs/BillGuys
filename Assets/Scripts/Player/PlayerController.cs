@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 namespace Player
 {
      [RequireComponent(typeof(CharacterController))]
+     [RequireComponent(typeof(Rigidbody))]
      [RequireComponent(typeof(PlayerAnimation))]
      public class PlayerController : MonoBehaviour, PlayerInputSystemController.IPlayerCharacterControllerActions
      {
@@ -472,8 +473,10 @@ namespace Player
           {
                if (TryGetComponent<Rigidbody>(out Rigidbody PlayerRb))
                {
+                    // With Rigidbody
                     Vector3 PlayerPosition = PlayerRb.transform.position;
 
+                    // With Character Controller
                     // Vector3 PlayerPosition = _PlayerCharacterController.transform.position;
 
                     // Reset velocity value
