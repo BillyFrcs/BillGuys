@@ -396,7 +396,7 @@ namespace Player
                _InitialJumpVelocity.Add(3, thirdJumpVelocity);
                
                // Initial jump gravity
-               _InitialJumpGravity.Add(0, _gravity);
+               _InitialJumpGravity.Add(ZERO, _gravity);
                _InitialJumpGravity.Add(1, _gravity);
                _InitialJumpGravity.Add(2, secondJumpGravity);
                _InitialJumpGravity.Add(3, thirdJumpGravity);

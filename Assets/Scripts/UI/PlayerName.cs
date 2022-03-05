@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,7 +18,7 @@ namespace UI
         private void Start()
         {
             // Set player character name 
-            var replaceCharacterNameObject = _CharacterObject.name.Replace("(Clone)", string.Empty); // Remove (Clone) text when spawn prefab
+            var replaceCharacterNameObject = _CharacterObject.name.Replace("(Clone)", String.Empty); // Remove (Clone) text when spawn prefab
 
             _CharacterName.SetText(replaceCharacterNameObject);
 
@@ -29,7 +30,7 @@ namespace UI
             Quaternion CameraRotation = _CameraOffset.transform.rotation;
             
             // Character name look at to the character object position
-            transform.LookAt(gameObject.transform.position + CameraRotation * Vector3.forward * Time.deltaTime, CameraRotation * Vector3.up * Time.deltaTime);
+            transform.LookAt(gameObject.transform.position + CameraRotation.normalized * Vector3.forward * Time.deltaTime, CameraRotation.normalized * Vector3.up * Time.deltaTime);
         }
     }
 }
