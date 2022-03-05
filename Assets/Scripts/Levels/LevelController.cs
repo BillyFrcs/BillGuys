@@ -16,6 +16,7 @@ namespace Levels
         [Header("Types Of Animation")] 
         [Tooltip("Rotate Object Animation")] [SerializeField] private bool _rotateAnimation;
         [Tooltip("Door Animation")] [SerializeField] private bool _doorAnimation;
+        [Tooltip("Drone Animation")] [SerializeField] private bool _droneAnimation;
         [Tooltip("Rotator Up Animation")][SerializeField] private bool _rotatorUpAnimation;
 
         [Header("Animation Speed")]
@@ -53,6 +54,11 @@ namespace Levels
             if (_rotatorUpAnimation)
             {
                 transform.DORotate(new Vector3(0f, 360f, 0f), _rotatorUp * 0.5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+            }
+
+            if (_droneAnimation)
+            {
+                transform.DOMoveY(transform.position.y + 1f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
             }
         }
     }
