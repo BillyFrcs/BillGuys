@@ -339,13 +339,23 @@ namespace Player
                this.Gravity();
                
                var isPlayerGrounded = _PlayerCharacterController.isGrounded;
-               
+
                if (!_isJumping && _isJumpPressed && isPlayerGrounded)
                {
+                    if (_jumpCounter < 2 && _CurrentJumpResetRoutine != null)
+                    {
+                         StopCoroutine(_CurrentJumpResetRoutine);
+                    }
+                    
+                    /*
+                    // Trajectory jump
+                    // --------------------------------
+                    // Use this if we use 3 type of jump animation
                     if (_jumpCounter < 3 && _CurrentJumpResetRoutine != null)
                     {
                          StopCoroutine(_CurrentJumpResetRoutine);
                     }
+                    */
                     
                     _isJumping = true;
 
@@ -357,8 +367,8 @@ namespace Player
 
                     PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
                     
-                    // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
-
+                    Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
+                    
                     // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
                     _AppliedPlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
@@ -372,34 +382,45 @@ namespace Player
           }
 
           /// <summary>
-          /// Initialize and calculate the jump physics state
+          /// Initialize and calculate the jump trajectory with physics
           /// </summary>
           private void InitializeJump()
           {
                var timeApex = _maxJumpTime / 2F;
-
-               _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
-
-               // First jump velocity
+               
+               /*
+               // Default concept of first jump velocity & gravity
                _jumpVelocity = (2f * _maxJumpHeight) / timeApex * 1.25f;
+               _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
+               */
+               
+               // First jump velocity & gravity
+               _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
+               _gravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
 
-               // Initialize trajectory jump velocity
+               // Second jump velocity & gravity
                float secondJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f);
                float secondJumpGravity = (-2f * (_maxJumpHeight + 2f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
-               float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
-               float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
+               // Third jump velocity & gravity
+               // Use this if we use 3 type of jump animation
+               // float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
+               // float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
                // Initial jump velocity
                _InitialJumpVelocity.Add(1, _jumpVelocity);
                _InitialJumpVelocity.Add(2, secondJumpVelocity);
-               _InitialJumpVelocity.Add(3, thirdJumpVelocity);
+               
+               // Use this if we use 3 type of jump animation
+               // _InitialJumpVelocity.Add(3, thirdJumpVelocity);
                
                // Initial jump gravity
                _InitialJumpGravity.Add(ZERO, _gravity);
                _InitialJumpGravity.Add(1, _gravity);
                _InitialJumpGravity.Add(2, secondJumpGravity);
-               _InitialJumpGravity.Add(3, thirdJumpGravity);
+               
+               // Use this if we use 3 type of jump animation
+               // _InitialJumpGravity.Add(3, thirdJumpGravity);
           }
 
           /// <summary>
@@ -417,15 +438,26 @@ namespace Player
 
                          _isJumpAnimating = false;
 
-                         _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine());
+                         _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine(0.5f));
 
+                         if (_jumpCounter == 2)
+                         {
+                              _jumpCounter = ZERO;
+                              
+                              PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
+                         }
+                         
+                         /*
                          // Trajectory jump
+                         // --------------------------------
+                         // Use this if we use 3 type of jump animation
                          if (_jumpCounter == 3)
                          {
                               _jumpCounter = ZERO;
                               
                               PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
                          }
+                         */
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
@@ -439,6 +471,7 @@ namespace Player
                     
                     _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
                          
+                    // Default applied movement
                     // _AppliedMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional next velocity of y with max value
@@ -457,10 +490,11 @@ namespace Player
           /// <summary>
           /// Reset jump counter 
           /// </summary>
+          /// <param name="timer"></param>
           /// <returns>WaitForSeconds</returns>
-          private IEnumerator ResetJumpRoutine()
+          private IEnumerator ResetJumpRoutine(float timer)
           {
-               yield return new WaitForSeconds(0.5f);
+               yield return new WaitForSeconds(timer);
 
                _jumpCounter = ZERO;
           }
