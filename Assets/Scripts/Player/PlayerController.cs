@@ -167,7 +167,7 @@ namespace Player
                _PlayerInputController.PlayerCharacterController.Dance.canceled += OnDance;
                
                // Punch input action
-               _PlayerInputController.PlayerCharacterController.Punch.performed+= OnPunch;
+               _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
                _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
                
                // Kick input action
