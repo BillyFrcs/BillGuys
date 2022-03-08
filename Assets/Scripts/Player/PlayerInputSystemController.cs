@@ -388,10 +388,9 @@ namespace Player.InputSystem
                     @Kick.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
                     @Kick.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
                     @Kick.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
-                   
-                    // @Look.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
-                    // @Look.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
-                    // @Look.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
+                    @Look.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
+                    @Look.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
+                    @Look.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnLook;
                 }
                 m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -414,10 +413,9 @@ namespace Player.InputSystem
                     @Kick.started += instance.OnKick;
                     @Kick.performed += instance.OnKick;
                     @Kick.canceled += instance.OnKick;
-
-                    // @Look.started += instance.OnLook;
-                    // @Look.performed += instance.OnLook;
-                    // @Look.canceled += instance.OnLook;
+                    @Look.started += instance.OnLook;
+                    @Look.performed += instance.OnLook;
+                    @Look.canceled += instance.OnLook;
                 }
             }
         }
@@ -430,8 +428,7 @@ namespace Player.InputSystem
             void OnDance(InputAction.CallbackContext context);
             void OnPunch(InputAction.CallbackContext context);
             void OnKick(InputAction.CallbackContext context);
-
-            // void OnLook(InputAction.CallbackContext context);
+            void OnLook(InputAction.CallbackContext context);
         }
     }
 }

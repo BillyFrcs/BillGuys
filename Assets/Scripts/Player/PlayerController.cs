@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
 using Player.InputSystem;
+using Sounds.SFX;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -133,6 +134,9 @@ namespace Player
           private void OnApplicationFocus(bool hasFocus)
           {
                // Lock cursor during play mode
+               Cursor.lockState = hasFocus ? CursorLockMode.Locked : CursorLockMode.None;
+               
+               /*
                if (hasFocus)
                {
                     Cursor.lockState = CursorLockMode.Locked;
@@ -141,6 +145,7 @@ namespace Player
                {
                     Cursor.lockState = CursorLockMode.None;
                }
+               */
           }
 
           /// <summary>
@@ -274,6 +279,15 @@ namespace Player
           }
 
           /// <summary>
+          /// Player mouse look input action callback
+          /// </summary>
+          /// <param name="onLookContext">InputAction.CallbackContext</param>
+          public void OnLook(InputAction.CallbackContext onLookContext)
+          {
+               onLookContext.ReadValueAsButton();
+          }
+
+          /// <summary>
           /// Player movement controller
           /// </summary>
           private void PlayerMovement()
@@ -340,40 +354,32 @@ namespace Player
                
                var isPlayerGrounded = _PlayerCharacterController.isGrounded;
 
-               if (!_isJumping && _isJumpPressed && isPlayerGrounded)
+               if (!_isJumping && _isJumpPressed == !false && isPlayerGrounded)
                {
-                    if (_jumpCounter < 2 && _CurrentJumpResetRoutine != null)
-                    {
-                         StopCoroutine(_CurrentJumpResetRoutine);
-                    }
-                    
-                    /*
-                    // Trajectory jump
-                    // --------------------------------
-                    // Use this if we use 3 type of jump animation
                     if (_jumpCounter < 3 && _CurrentJumpResetRoutine != null)
                     {
                          StopCoroutine(_CurrentJumpResetRoutine);
                     }
-                    */
-                    
+
                     _isJumping = true;
 
                     PlayerAnimation.Instance.JumpAnimation(true);
-                    
+
+                    SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+
                     _isJumpAnimating = true;
 
                     _jumpCounter++;
 
                     PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-                    
+
                     Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
-                    
+
                     // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
                     _PlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
                }
-               else if (!_isJumpPressed && _isJumping && isPlayerGrounded)
+               else if (!_isJumpPressed == !false && _isJumping && isPlayerGrounded)
                {
                     _isJumping = false;
 
@@ -399,28 +405,24 @@ namespace Player
                _gravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
 
                // Second jump velocity & gravity
-               float secondJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f);
+               float secondJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 1f)) / Mathf.Cos(timeApex * 2f);
                float secondJumpGravity = (-2f * (_maxJumpHeight + 2f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
                // Third jump velocity & gravity
                // Use this if we use 3 type of jump animation
-               // float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
-               // float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
+               float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
+               float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
                
                // Initial jump velocity
                _InitialJumpVelocity.Add(1, _jumpVelocity);
                _InitialJumpVelocity.Add(2, secondJumpVelocity);
-               
-               // Use this if we use 3 type of jump animation
-               // _InitialJumpVelocity.Add(3, thirdJumpVelocity);
+               _InitialJumpVelocity.Add(3, thirdJumpVelocity);
                
                // Initial jump gravity
                _InitialJumpGravity.Add(ZERO, _gravity);
                _InitialJumpGravity.Add(1, _gravity);
                _InitialJumpGravity.Add(2, secondJumpGravity);
-               
-               // Use this if we use 3 type of jump animation
-               // _InitialJumpGravity.Add(3, thirdJumpGravity);
+               _InitialJumpGravity.Add(3, thirdJumpGravity);
           }
 
           /// <summary>
@@ -439,25 +441,17 @@ namespace Player
                          _isJumpAnimating = false;
 
                          _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine(0.5f));
-
-                         if (_jumpCounter == 2)
-                         {
-                              _jumpCounter = ZERO;
-                              
-                              PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-                         }
                          
-                         /*
-                         // Trajectory jump
-                         // --------------------------------
-                         // Use this if we use 3 type of jump animation
                          if (_jumpCounter == 3)
                          {
                               _jumpCounter = ZERO;
-                              
+
                               PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
+                              
+                              SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
+
+                              // Debug.Log("Slide"); // DEBUG
                          }
-                         */
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
@@ -472,7 +466,7 @@ namespace Player
                     _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
                          
                     // Default applied movement
-                    // _AppliedMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
+                    // _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional next velocity of y with max value
                     _PlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
