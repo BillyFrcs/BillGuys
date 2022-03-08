@@ -29,7 +29,7 @@ namespace Player
           private Vector2 _CurrentMovementInput;
           private Vector3 _CurrentMovement;
           private Vector3 _CurrentRunMovement;
-          private Vector3 _AppliedPlayerMovement;
+          private Vector3 _PlayerMovement; // This is for applied player movement
           private bool _isMove;
           private bool _isMovementPressed;
           private bool _isRunPressed;
@@ -283,16 +283,16 @@ namespace Player
                     if (_isRunPressed)
                     {
                          // Run with high movement speed
-                         _AppliedPlayerMovement.x = _CurrentRunMovement.x;
-                         _AppliedPlayerMovement.z = _CurrentRunMovement.z;
+                         _PlayerMovement.x = _CurrentRunMovement.x;
+                         _PlayerMovement.z = _CurrentRunMovement.z;
                          
                          // _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
                     }
                     else
                     {
                          // Run with default movement speed
-                         _AppliedPlayerMovement.x = _CurrentMovement.x;
-                         _AppliedPlayerMovement.z = _CurrentMovement.z;
+                         _PlayerMovement.x = _CurrentMovement.x;
+                         _PlayerMovement.z = _CurrentMovement.z;
                          
                          // _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
 
@@ -300,7 +300,7 @@ namespace Player
                     }
                     
                     // Move player character
-                    _PlayerCharacterController.Move(_AppliedPlayerMovement * Time.deltaTime);
+                    _PlayerCharacterController.Move(_PlayerMovement * Time.deltaTime);
 
                     RotatePlayerDirection();
 
@@ -371,7 +371,7 @@ namespace Player
                     
                     // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
-                    _AppliedPlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
+                    _PlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
                }
                else if (!_isJumpPressed && _isJumping && isPlayerGrounded)
                {
@@ -461,7 +461,7 @@ namespace Player
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
-                    _AppliedPlayerMovement.y = _groundedGravity;
+                    _PlayerMovement.y = _groundedGravity;
                      
                     // Debug.Log($"{gameObject.name} is on the ground"); // DEBUG
                }
@@ -475,7 +475,7 @@ namespace Player
                     // _AppliedMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional next velocity of y with max value
-                    _AppliedPlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
+                    _PlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
                }
                else
                {
@@ -483,7 +483,7 @@ namespace Player
 
                     _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * Time.deltaTime);
 
-                    _AppliedPlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
+                    _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
                }
           }
 
