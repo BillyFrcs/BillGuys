@@ -46,6 +46,7 @@ namespace Player
           private bool _isJumpPressed;
           private bool _isJumping;
           private bool _isJumpAnimating;
+          private bool _canPlayJumpSFX;
 
           // Trajectory jump velocity
           private Dictionary<int, float> _InitialJumpVelocity = new Dictionary<int, float>();
@@ -365,7 +366,12 @@ namespace Player
 
                     PlayerAnimation.Instance.JumpAnimation(true);
 
-                    SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+                    _canPlayJumpSFX = true;
+                    
+                    if (_canPlayJumpSFX)
+                    {
+                         SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+                    }
 
                     _isJumpAnimating = true;
 
@@ -373,7 +379,16 @@ namespace Player
 
                     PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
 
-                    Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
+                    if (_jumpCounter == 3)
+                    {
+                         _canPlayJumpSFX = false;
+                         
+                         SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
+
+                         SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
+                    }
+
+                    // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
                     // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
@@ -448,7 +463,7 @@ namespace Player
 
                               PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
                               
-                              SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
+                              // SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
 
                               // Debug.Log("Slide"); // DEBUG
                          }
@@ -484,7 +499,7 @@ namespace Player
           /// <summary>
           /// Reset jump counter 
           /// </summary>
-          /// <param name="timer"></param>
+          /// <param name="timer">float</param>
           /// <returns>WaitForSeconds</returns>
           private IEnumerator ResetJumpRoutine(float timer)
           {
@@ -496,7 +511,7 @@ namespace Player
           /// <summary>
           /// Respawn player when falling out of the level
           /// </summary>
-          /// <exception cref="System.Exception">throw</exception>
+          /// <exception cref="System.NullReferenceException">throw null reference</exception>
           private void RespawnPlayer()
           {
                if (TryGetComponent<Rigidbody>(out Rigidbody PlayerRb))

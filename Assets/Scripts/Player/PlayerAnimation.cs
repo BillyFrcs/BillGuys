@@ -10,16 +10,16 @@ namespace Player
     {
         private struct ParameterAnimator
         {
-            public static String movement = "Movement";
-            public static String run = "Run";
-            public static String jump = "Jump";
-            public static String jumpOnTake = "Jump On Take";
-            public static String dance = "Dance";
-            public static String dizzy = "Dizzy";
-            public static String punch = "Punch";
-            public static String kick = "Kick";
-            public static String victory = "Victory";
-            public static String die = "Die";
+            public static String Movement = "Movement";
+            public static String Run = "Run";
+            public static String Jump = "Jump";
+            public static String JumpOnTake = "Jump On Take";
+            public static String Dance = "Dance";
+            public static String Dizzy = "Dizzy";
+            public static String Punch = "Punch";
+            public static String Kick = "Kick";
+            public static String Victory = "Victory";
+            public static String Die = "Die";
         }
         
         public static PlayerAnimation Instance;
@@ -52,17 +52,17 @@ namespace Player
         {
             if (TryGetComponent(out Animator PlayerAnimator))
             {
-                bool isPlayerRun = PlayerAnimator.GetBool(ParameterAnimator.movement);
+                bool isPlayerRun = PlayerAnimator.GetBool(ParameterAnimator.Movement);
                 
                 if (isPlayerMove == true && !isPlayerRun)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.movement, true);
+                    PlayerAnimator.SetBool(ParameterAnimator.Movement, true);
                     
                     // Debug.Log("Move animation"); // DEBUG
                 }
                 else if (!isPlayerMove && isPlayerRun)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.movement, false);
+                    PlayerAnimator.SetBool(ParameterAnimator.Movement, false);
                     
                     // Debug.Log("Stop move animation"); // DEBUG
                 }
@@ -78,17 +78,17 @@ namespace Player
         {
             if (TryGetComponent(out Animator PlayerAnimator))
             {
-                bool isPlayerRunning = PlayerAnimator.GetBool(ParameterAnimator.run);
+                bool isPlayerRunning = PlayerAnimator.GetBool(ParameterAnimator.Run);
                 
                 if (isPlayerMove == true && isPlayerRun && !isPlayerRunning)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.run, true);
+                    PlayerAnimator.SetBool(ParameterAnimator.Run, true);
                     
                     // Debug.Log("Run animation"); // DEBUG
                 }
                 else if (!isPlayerMove || !isPlayerRun && isPlayerRunning)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.run, false);
+                    PlayerAnimator.SetBool(ParameterAnimator.Run, false);
                     
                     // Debug.Log("Stop run animation"); // DEBUG
                 }
@@ -103,7 +103,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var jumpAnimation = Animator.StringToHash(ParameterAnimator.jump);
+                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jump);
 
                 if (isPlayerJump != false)
                 {
@@ -128,7 +128,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var jumpOnTakeAnimation = Animator.StringToHash(ParameterAnimator.jumpOnTake);
+                var jumpOnTakeAnimation = Animator.StringToHash(ParameterAnimator.JumpOnTake);
 
                 PlayerAnimator.SetInteger(jumpOnTakeAnimation, jumpCounter);
             }
@@ -142,7 +142,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var danceAnimation = Animator.StringToHash(ParameterAnimator.dance);
+                var danceAnimation = Animator.StringToHash(ParameterAnimator.Dance);
 
                 if (isPlayerDance != false)
                 {
@@ -162,7 +162,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var dizzyAnimation = Animator.StringToHash(ParameterAnimator.dizzy);
+                var dizzyAnimation = Animator.StringToHash(ParameterAnimator.Dizzy);
 
                 PlayerAnimator.SetTrigger(dizzyAnimation);
             }
@@ -175,7 +175,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var punchAnimation = Animator.StringToHash(ParameterAnimator.punch);
+                var punchAnimation = Animator.StringToHash(ParameterAnimator.Punch);
 
                 PlayerAnimator.SetTrigger(punchAnimation);
             }
@@ -188,7 +188,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var kickAnimation = Animator.StringToHash(ParameterAnimator.kick);
+                var kickAnimation = Animator.StringToHash(ParameterAnimator.Kick);
 
                 PlayerAnimator.SetTrigger(kickAnimation);
             }
@@ -201,7 +201,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var victoryAnimation = Animator.StringToHash(ParameterAnimator.victory);
+                var victoryAnimation = Animator.StringToHash(ParameterAnimator.Victory);
 
                 PlayerAnimator.SetTrigger(victoryAnimation);
             }
@@ -214,7 +214,7 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var dieAnimation = Animator.StringToHash(ParameterAnimator.die);
+                var dieAnimation = Animator.StringToHash(ParameterAnimator.Die);
                 
                 PlayerAnimator.SetTrigger(dieAnimation);
                 
