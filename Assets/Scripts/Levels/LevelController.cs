@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Levels
 {
@@ -17,8 +18,8 @@ namespace Levels
         [Tooltip("Rotate Object Animation")] [SerializeField] private bool _rotateAnimation;
         [Tooltip("Door Animation")] [SerializeField] private bool _doorAnimation;
         [Tooltip("Drone Animation")] [SerializeField] private bool _droneAnimation;
-        [Tooltip("Rotator Up Animation")][SerializeField] private bool _rotatorUpAnimation;
-
+        [Tooltip("Rotator Up Animation")] [SerializeField] private bool _rotatorUpAnimation;
+        
         [Header("Animation Speed")]
         [Tooltip("Speed Of Rotate Animation")] [SerializeField] private float _rotate = 2f;
         [Tooltip("Speed Of Rotator Up Animation")][SerializeField] private float _rotatorUp = 2f;
