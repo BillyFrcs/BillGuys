@@ -22,7 +22,10 @@ namespace UI
 
             _CharacterName.SetText(replaceCharacterNameObject);
 
-            _CameraOffset = Camera.main.gameObject.transform;
+            if (Camera.main != null)
+            {
+                _CameraOffset = Camera.main.gameObject.transform;
+            }
         }
 
         private void LateUpdate()

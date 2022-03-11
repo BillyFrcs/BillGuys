@@ -15,22 +15,20 @@ namespace Player
      [RequireComponent(typeof(CharacterController))]
      [RequireComponent(typeof(Rigidbody))]
      [RequireComponent(typeof(PlayerAnimation))]
+     [RequireComponent(typeof(PlayerCharacterPhysics))]
      public class PlayerController : MonoBehaviour, PlayerInputSystemController.IPlayerCharacterControllerActions
      {
           // Player controller component
           private CharacterController _PlayerCharacterController;
           private PlayerInputSystemController _PlayerInputController;
           
-          // Velocity of player character
-          private Vector3 _PlayerVelocity;
-
           [Header("Player Movement Controller")]
           [Tooltip("Default Movement Speed Of Player Character")] [SerializeField] private float _movementSpeed;
           [Tooltip("Run Movement Speed Of Player Character")] [SerializeField] private float _runMovementSpeed;
           private Vector2 _CurrentMovementInput;
           private Vector3 _CurrentMovement;
           private Vector3 _CurrentRunMovement;
-          private Vector3 _PlayerMovement; // This is for applied player movement
+          private Vector3 _PlayerMovementVelocity; // This is for applied player movement
           private bool _isMove;
           private bool _isMovementPressed;
           private bool _isRunPressed;
@@ -49,8 +47,8 @@ namespace Player
           private bool _canPlayJumpSFX;
 
           // Trajectory jump velocity
-          private Dictionary<int, float> _InitialJumpVelocity = new Dictionary<int, float>();
-          private Dictionary<int, float> _InitialJumpGravity = new Dictionary<int, float>();
+          private readonly Dictionary<int, float> _InitialJumpVelocity = new Dictionary<int, float>();
+          private readonly Dictionary<int, float> _InitialJumpGravity = new Dictionary<int, float>();
           private Coroutine _CurrentJumpResetRoutine = null;
           private int _jumpCounter;
 
@@ -64,6 +62,10 @@ namespace Player
           private bool _isPunch;
           private bool _isKick;
           
+          // Attack condition
+          private bool _canPunch = true;
+          private bool _canKick = false;
+          
           // Timer
           private float _dieTimer;
           
@@ -71,6 +73,8 @@ namespace Player
           private const int ZERO = 0;
           private const float FALL_DIZZY = -10F;
           private const float FALL_DISTANCE = -40F;
+
+          private Transform _CameraTransform;
 
           private void Awake()
           {
@@ -84,6 +88,11 @@ namespace Player
           // Start is called before the first frame update
           private void Start()
           {
+               if (Camera.main != null)
+               {
+                    _CameraTransform = Camera.main.transform;
+               }
+
                _isMove = true;
                _isJump = true;
                _isJumpPressed = false;
@@ -91,7 +100,7 @@ namespace Player
                _isJumpAnimating = false;
                _isDance = true;
                _isPunch = true;
-               _isKick = false;
+               _isKick = true;
 
                _gravity = -9.8F;
                _groundedGravity = -0.05F;
@@ -173,9 +182,12 @@ namespace Player
                _PlayerInputController.PlayerCharacterController.Dance.canceled += OnDance;
                
                // Punch input action
-               _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
-               _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
-               
+               if (_canPunch)
+               {
+                    _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
+                    _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
+               }
+
                // Kick input action
                _PlayerInputController.PlayerCharacterController.Kick.performed += OnKick;
                _PlayerInputController.PlayerCharacterController.Kick.canceled += OnKick;
@@ -253,7 +265,7 @@ namespace Player
           /// <param name="punchContext">InputAction.CallbackContext</param>
           public void OnPunch(InputAction.CallbackContext punchContext)
           {
-               if (_isPunch)
+               if (_isPunch && _canPunch)
                {
                     if (punchContext.performed)
                     {
@@ -268,9 +280,9 @@ namespace Player
           /// <param name="kickContext">InputAction.CallbackContext</param>
           public void OnKick(InputAction.CallbackContext kickContext)
           {
-               if (kickContext.performed)
+               if (_isKick && _canKick)
                {
-                    if (_isKick)
+                    if (kickContext.performed)
                     {
                          PlayerAnimation.Instance.KickAnimation();
 
@@ -298,30 +310,41 @@ namespace Player
                     if (_isRunPressed)
                     {
                          // Run with high movement speed
-                         _PlayerMovement.x = _CurrentRunMovement.x;
-                         _PlayerMovement.z = _CurrentRunMovement.z;
+                         _PlayerMovementVelocity.x = _CurrentRunMovement.x;
+                         _PlayerMovementVelocity.z = _CurrentRunMovement.z;
                          
                          // _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
                     }
                     else
                     {
                          // Run with default movement speed
-                         _PlayerMovement.x = _CurrentMovement.x;
-                         _PlayerMovement.z = _CurrentMovement.z;
-                         
-                         // _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
+                         _PlayerMovementVelocity.x = _CurrentMovement.x;
+                         _PlayerMovementVelocity.z = _CurrentMovement.z;
 
-                         _isKick = true;
+                         // _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
                     }
                     
+                    // Follow the player direction with the angle of main camera
+                    _PlayerMovementVelocity = Quaternion.AngleAxis(_CameraTransform.rotation.eulerAngles.y, Vector3.Normalize(Vector3.up)) * _PlayerMovementVelocity;
+                    
                     // Move player character
-                    _PlayerCharacterController.Move(_PlayerMovement * Time.deltaTime);
+                    _PlayerCharacterController.Move(_PlayerMovementVelocity * Time.deltaTime);
 
                     RotatePlayerDirection();
 
                     PlayerAnimation.Instance.MovementAnimation(_isMovementPressed);
 
                     PlayerAnimation.Instance.RunAnimation(_isMovementPressed, _isRunPressed);
+
+                    // Checking for kick action when player is move or running
+                    if (_isMovementPressed || _isRunPressed)
+                    { 
+                         _canKick = true;
+                    }
+                    else
+                    {
+                         _canKick = false;
+                    }
                }
           }
 
@@ -331,18 +354,26 @@ namespace Player
           private void RotatePlayerDirection()
           {
                Vector3 PositionToLookAt;
-
+               
+               PositionToLookAt.x = _PlayerMovementVelocity.x;
+               PositionToLookAt.y = (float)ZERO;
+               PositionToLookAt.z = _PlayerMovementVelocity.z;
+               
+               /*
                PositionToLookAt.x = _CurrentMovement.x;
                PositionToLookAt.y = (float)ZERO;
                PositionToLookAt.z = _CurrentMovement.z;
+               */
 
                Quaternion CurrentRotation = gameObject.transform.rotation;
 
+               // _PlayerMovement = _Camera.forward * _PlayerMovement.z + _Camera.right * _PlayerMovement.z;
+
                if (_isMovementPressed)
                {
-                    Quaternion PlayerRotation = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.deltaTime));
+                    Quaternion RotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.deltaTime));
                     
-                    gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation, PlayerRotation, Mathf.Sin(_rotationSpeed * Time.deltaTime));
+                    gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation, RotatePlayerDirection, Mathf.Sin(_rotationSpeed * Time.deltaTime));
                }
           }
 
@@ -363,6 +394,8 @@ namespace Player
                     }
 
                     _isJumping = true;
+                    
+                    _canPunch = false;
 
                     PlayerAnimation.Instance.JumpAnimation(true);
 
@@ -387,16 +420,17 @@ namespace Player
 
                          SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                     }
-
+                    
                     // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
                     // Jump movement
                     _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
-                    _PlayerMovement.y = _InitialJumpVelocity[_jumpCounter];
+                    _PlayerMovementVelocity.y = _InitialJumpVelocity[_jumpCounter];
                }
                else if (!_isJumpPressed == !false && _isJumping && isPlayerGrounded)
                {
                     _isJumping = false;
+                    _canPunch = true;
 
                     // print("Stop jumping: " + _isJumping); // PRINT
                }
@@ -463,14 +497,12 @@ namespace Player
 
                               PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
                               
-                              // SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
-
                               // Debug.Log("Slide"); // DEBUG
                          }
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
-                    _PlayerMovement.y = _groundedGravity;
+                    _PlayerMovementVelocity.y = _groundedGravity;
                      
                     // Debug.Log($"{gameObject.name} is on the ground"); // DEBUG
                }
@@ -484,7 +516,7 @@ namespace Player
                     // _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional next velocity of y with max value
-                    _PlayerMovement.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
+                    _PlayerMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
                }
                else
                {
@@ -492,7 +524,7 @@ namespace Player
 
                     _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * Time.deltaTime);
 
-                    _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
+                    _PlayerMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
                }
           }
 

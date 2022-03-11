@@ -62,21 +62,21 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
   m_LookaheadIgnoreY: 0
-  m_XDamping: 0.2
-  m_YDamping: 0.2
+  m_XDamping: 0.5
+  m_YDamping: 0.5
   m_ZDamping: 1
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
   m_ScreenY: 0.4
   m_CameraDistance: 13
   m_DeadZoneWidth: 0.1
-  m_DeadZoneHeight: 0.1
+  m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0.1
   m_UnlimitedSoftZone: 0
   m_SoftZoneWidth: 0.1
   m_SoftZoneHeight: 0.3
   m_BiasX: 0
-  m_BiasY: 0.49999994
+  m_BiasY: 0.24999996
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
   m_AdjustmentMode: 2
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RecenterTarget: 2
   m_VerticalAxis:
-    Value: 50
+    Value: 30
     m_SpeedMode: 1
     m_MaxSpeed: 0.03
     m_AccelTime: 0.2
@@ -130,7 +130,7 @@ MonoBehaviour:
     m_InvertInput: 1
     m_MinValue: -70
     m_MaxValue: 70
-    m_Wrap: 0
+    m_Wrap: 1
     m_Recentering:
       m_enabled: 0
       m_WaitTime: 1
@@ -178,7 +178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6064233186655815289}
   - component: {fileID: 6064233186655815288}
-  - component: {fileID: 6064233186655815294}
   - component: {fileID: 1228830526}
   m_Layer: 0
   m_Name: CM TPP (Player)
@@ -230,43 +229,25 @@ MonoBehaviour:
     Dutch: 0
     LensShift: {x: 0, y: 0}
   m_Transitions:
-    m_BlendHint: 0
+    m_BlendHint: 3
     m_InheritPosition: 1
     m_OnCameraLive:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 6064233186655815291}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: 
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 6064233186308210641}
---- !u!114 &6064233186655815294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6064233186655815291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 1
-  m_IgnoreTag: Player
-  m_TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_MinimumDistanceFromTarget: 0.1
-  m_AvoidObstacles: 1
-  m_DistanceLimit: 0
-  m_MinimumOcclusionTime: 0
-  m_CameraRadius: 0.1
-  m_Strategy: 1
-  m_MaximumEffort: 4
-  m_SmoothingTime: 0.1
-  m_Damping: 0.2
-  m_DampingWhenOccluded: 0.1
-  m_OptimalTargetDistance: 0
 --- !u!114 &1228830526
 MonoBehaviour:
   m_ObjectHideFlags: 0

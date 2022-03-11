@@ -134,7 +134,7 @@ public class CharacterControls : MonoBehaviour {
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, -Vector3.up, out hit, distToGround + 0.1f))
 		{
-			if (hit.transform.tag == "Slide")
+			if (hit.transform.CompareTag("Slide"))
 			{
 				slide = true;
 			}

@@ -1,5 +1,93 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &469619321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 469619322}
+  - component: {fileID: 469619323}
+  m_Layer: 0
+  m_Name: Boxis Gloves Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &469619322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469619321}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.858, y: 0.724, z: 1.346}
+  m_LocalScale: {x: 1.6666665, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7971724342709502720}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &469619323
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469619321}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.27009198
+  m_Center: {x: 0, y: -5.217079e-16, z: -0.1617119}
+--- !u!1 &778347534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 778347535}
+  - component: {fileID: 778347536}
+  m_Layer: 0
+  m_Name: Boxis Gloves Right
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &778347535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778347534}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.928, y: 0.778, z: 1.446}
+  m_LocalScale: {x: 1.6666665, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7971724342709502720}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &778347536
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778347534}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.27009198
+  m_Center: {x: 0, y: -5.217079e-16, z: -0.1617119}
 --- !u!1 &224914822783684320
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,6 +391,7 @@ GameObject:
   - component: {fileID: 7931258269574519162}
   - component: {fileID: 6711585763433981450}
   - component: {fileID: 4761613103378870536}
+  - component: {fileID: 6878043426307650049}
   m_Layer: 0
   m_Name: Billy
   m_TagString: Player
@@ -383,7 +472,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &6711585763433981450
 MonoBehaviour:
@@ -415,6 +504,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d94389e880da4d94ba8b0318b5b60f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6878043426307650049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740524559906761314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31907f6707bbbf6428d2b21fa78da7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _forceMagnitude: 1
 --- !u!1 &871552841647248152
 GameObject:
   m_ObjectHideFlags: 0
@@ -2636,7 +2738,9 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: -0.649, z: -0.259}
   m_LocalScale: {x: 0.6, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 778347535}
+  - {fileID: 469619322}
   m_Father: {fileID: 2432347855930754417}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

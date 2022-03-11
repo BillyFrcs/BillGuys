@@ -490,6 +490,7 @@ GameObject:
   - component: {fileID: 2233885538752226613}
   - component: {fileID: 2233885538752226612}
   - component: {fileID: 2233885538752226619}
+  - component: {fileID: 7418962383170347604}
   m_Layer: 0
   m_Name: George
   m_TagString: Player
@@ -603,6 +604,19 @@ MonoBehaviour:
   _maxJumpHeight: 2
   _maxJumpTime: 0.75
   _gravityMultiplier: 2
+--- !u!114 &7418962383170347604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2233885538752226618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31907f6707bbbf6428d2b21fa78da7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _forceMagnitude: 1
 --- !u!1 &2254382688777068019
 GameObject:
   m_ObjectHideFlags: 0
