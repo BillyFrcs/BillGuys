@@ -415,12 +415,20 @@ namespace Player
                     if (_jumpCounter == 3)
                     {
                          _canPlayJumpSFX = false;
-                         
+
                          SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
 
                          SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                     }
-                    
+
+                    if (_jumpCounter == 2 || _jumpCounter == 3)
+                    {
+                         _canKick = false;
+                         _isKick = false;
+                         
+                         // Debug.Log($"Kick {_canKick} {_jumpCounter}"); // DEBUG
+                    }
+
                     // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
 
                     // Jump movement
@@ -430,7 +438,9 @@ namespace Player
                else if (!_isJumpPressed == !false && _isJumping && isPlayerGrounded)
                {
                     _isJumping = false;
+
                     _canPunch = true;
+                    _isKick = true;
 
                     // print("Stop jumping: " + _isJumping); // PRINT
                }
