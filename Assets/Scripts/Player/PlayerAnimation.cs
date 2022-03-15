@@ -221,5 +221,10 @@ namespace Player
                 // Debug.Log("Die animation"); // DEBUG
             }
         }
+        
+        /// <summary>
+        /// Player character animator component
+        /// </summary>
+        public Animator PlayerCharacterAnimator => TryGetComponent(out Animator PlayerAnimator) ? PlayerAnimator : null;
     }
 }

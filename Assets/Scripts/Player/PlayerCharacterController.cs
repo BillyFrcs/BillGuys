@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
+using Helpers.Tags;
 using Player.InputSystem;
 using Sounds.SFX;
 using Unity.Mathematics;
@@ -12,23 +13,21 @@ using UnityEngine.SceneManagement;
 
 namespace Player
 {
-     [RequireComponent(typeof(CharacterController))]
      [RequireComponent(typeof(Rigidbody))]
      [RequireComponent(typeof(PlayerAnimation))]
-     [RequireComponent(typeof(PlayerCharacterPhysics))]
-     public class PlayerController : MonoBehaviour, PlayerInputSystemController.IPlayerCharacterControllerActions
+     public class PlayerCharacterController : MonoBehaviour, PlayerInputSystemController.IPlayerCharacterControllerActions
      {
           // Player controller component
-          private CharacterController _PlayerCharacterController;
           private PlayerInputSystemController _PlayerInputController;
           
           [Header("Player Movement Controller")]
-          [Tooltip("Default Movement Speed Of Player Character")] [SerializeField] private float _movementSpeed;
-          [Tooltip("Run Movement Speed Of Player Character")] [SerializeField] private float _runMovementSpeed;
-          private Vector2 _CurrentMovementInput;
+          [Tooltip("Default Movement Speed Of Player Character")] [SerializeField] private float _movementSpeed = 250f;
+          [Tooltip("Run Movement Speed Of Player Character")] [SerializeField] private float _runMovementSpeed = 260;
+          private Vector2 _PlayerMovementInput;
           private Vector3 _CurrentMovement;
           private Vector3 _CurrentRunMovement;
-          private Vector3 _PlayerMovementVelocity; // This is for applied player movement
+          private Vector3 _PlayerCharacterMovementVelocity; // This is for applied player movement
+          private Rigidbody _PlayerRb;
           private bool _isMove;
           private bool _isMovementPressed;
           private bool _isRunPressed;
@@ -36,9 +35,9 @@ namespace Player
           [Header("Rotate Object Direction")]
           [Tooltip("Rotation Speed To Rotate Player Direction")] [SerializeField] [Range(0, 20)] private float _rotationSpeed = 15f;
 
-          [Header("Jump And Gravity Object")] 
-          [Tooltip("Set Max Jump Height")] [SerializeField] private float _maxJumpHeight = 4.0f;
-          [Tooltip("Set Max Jump Time")] [SerializeField] private float _maxJumpTime = 0.75f;
+          [Header("Jump And Gravity Object")]
+          [Tooltip("Set Max Jump Height With Speed")] [field: SerializeField] private float _maxJumpHeight = 1.0f;
+          [Tooltip("Set Max Jump Time")] [field: SerializeField] private float _maxJumpTime = 0.75f;
           private float _jumpVelocity;
           private bool _isJump;
           private bool _isJumpPressed;
@@ -46,16 +45,11 @@ namespace Player
           private bool _isJumpAnimating;
           private bool _canPlayJumpSFX;
 
-          // Trajectory jump velocity
-          private readonly Dictionary<int, float> _InitialJumpVelocity = new Dictionary<int, float>();
-          private readonly Dictionary<int, float> _InitialJumpGravity = new Dictionary<int, float>();
-          private Coroutine _CurrentJumpResetRoutine = null;
-          private int _jumpCounter;
-
           // Gravity
+          [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 1.0f;
           private float _gravity;
           private float _groundedGravity;
-          [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 1.0f;
+          private bool _isGrounded;
           
           // Control animation state
           private bool _isDance;
@@ -69,16 +63,26 @@ namespace Player
           // Timer
           private float _dieTimer;
           
-          // Constants ----------------------------------------------------------------
+          // Constants
           private const int ZERO = 0;
           private const float FALL_DIZZY = -10F;
           private const float FALL_DISTANCE = -40F;
 
+          // Camera
           private Transform _CameraTransform;
+          
+          // RagDoll character physics controller
+          [Header("RagDoll Character")]
+          [Tooltip("Force Magnitude To Push Obstacle")] [field: SerializeField] private float _forceMagnitude = 1f;
+          private PlayerRagDollCharacterController _PlayerRagDoll;
+
+          private float _distanceToTheGround;
 
           private void Awake()
           {
-               _PlayerCharacterController = gameObject.GetComponent(typeof(CharacterController)) as CharacterController;
+               _PlayerRb = GetComponent(typeof(Rigidbody)) as Rigidbody;
+
+               _PlayerRagDoll = FindObjectOfType<PlayerRagDollCharacterController>();
 
                _PlayerInputController = new PlayerInputSystemController();
                
@@ -93,16 +97,18 @@ namespace Player
                     _CameraTransform = Camera.main.transform;
                }
 
+               // Get character distance to the ground
+               _distanceToTheGround = GetComponent<Collider>().bounds.extents.y;
+
                _isMove = true;
                _isJump = true;
                _isJumpPressed = false;
-               _isJumping = false;
                _isJumpAnimating = false;
                _isDance = true;
                _isPunch = true;
                _isKick = true;
 
-               _gravity = -9.8F;
+               _gravity = -9.81F;
                _groundedGravity = -0.05F;
 
                _dieTimer = 2.0f;
@@ -111,16 +117,19 @@ namespace Player
           // Update is called once per frame
           private void Update()
           {
-               this.PlayerMovement();
+               // Take player's movement input action 
+               _PlayerCharacterMovementVelocity = new Vector3(_PlayerMovementInput.x, 0f, _PlayerMovementInput.y).normalized;
                
-               this.PlayerJump();
+               PlayerJump();
                
-               RespawnPlayer();
+               this.RespawnPlayer();
           }
 
           // Fixed Update is used for physics calculation
           private void FixedUpdate()
           {
+               PlayerMovement();
+               
                // Calculate fast fall of player gravity
                if (TryGetComponent(out Rigidbody PlayerRb))
                {
@@ -175,6 +184,7 @@ namespace Player
                // Jump input action
                _PlayerInputController.PlayerCharacterController.Jump.started += OnJump;
                _PlayerInputController.PlayerCharacterController.Jump.canceled += OnJump;
+               
                InitializeJump();
 
                // Dance input action
@@ -201,17 +211,17 @@ namespace Player
           {
                if (_isMove)
                {
-                    _CurrentMovementInput = movementContext.ReadValue<Vector2>();
+                    _PlayerMovementInput = movementContext.ReadValue<Vector2>();
 
                     // Player move
-                    _CurrentMovement.x = _CurrentMovementInput.x * _movementSpeed;
-                    _CurrentMovement.z = _CurrentMovementInput.y * _movementSpeed;
+                    _CurrentMovement.x = _PlayerMovementInput.x * _movementSpeed;
+                    _CurrentMovement.z = _PlayerMovementInput.y * _movementSpeed;
 
                     // Player run
-                    _CurrentRunMovement.x = _CurrentMovementInput.x * _runMovementSpeed;
-                    _CurrentRunMovement.z = _CurrentMovementInput.y * _runMovementSpeed;
-
-                    _isMovementPressed = _CurrentMovementInput.x != 0F || _CurrentMovementInput.y != 0F;
+                    _CurrentRunMovement.x = _PlayerMovementInput.x * _runMovementSpeed;
+                    _CurrentRunMovement.z = _PlayerMovementInput.y * _runMovementSpeed;
+                    
+                    _isMovementPressed = _PlayerMovementInput.x != 0F || _PlayerMovementInput.y != 0F;
 
                     // Debug.Log(movementContext.ReadValue<Vector2>()); // DEBUG
                }
@@ -224,6 +234,8 @@ namespace Player
           public void OnRun(InputAction.CallbackContext runMovementContext)
           {
                _isRunPressed = runMovementContext.ReadValueAsButton();
+               
+               // Debug.Log($"Player run: {_isRunPressed}");
           }
 
           /// <summary>
@@ -236,7 +248,7 @@ namespace Player
                {
                     _isJumpPressed = jumpContext.ReadValueAsButton();
 
-                    // Debug.Log($"Jump: {_isJumpPressed}"); // DEBUG
+                    Debug.Log($"Jump: {_isJumpPressed}"); // DEBUG
                }
           }
           
@@ -309,33 +321,33 @@ namespace Player
                {
                     if (_isRunPressed)
                     {
-                         // Run with high movement speed
-                         _PlayerMovementVelocity.x = _CurrentRunMovement.x;
-                         _PlayerMovementVelocity.z = _CurrentRunMovement.z;
+                         // Set player run velocity
+                         _PlayerCharacterMovementVelocity.x = _CurrentRunMovement.x;
+                         _PlayerCharacterMovementVelocity.z = _CurrentRunMovement.z;
                          
-                         // _PlayerCharacterController.Move(_CurrentRunMovement * Time.deltaTime);
+                         // _PlayerRb.velocity = _CurrentRunMovement * Time.fixedDeltaTime + new Vector3(0f, _PlayerRb.velocity.y, 0f);
                     }
                     else
                     {
-                         // Run with default movement speed
-                         _PlayerMovementVelocity.x = _CurrentMovement.x;
-                         _PlayerMovementVelocity.z = _CurrentMovement.z;
-
-                         // _PlayerCharacterController.Move(_CurrentMovement * Time.deltaTime);
+                         // Set player movement velocity
+                         _PlayerCharacterMovementVelocity.x = _CurrentMovement.x;
+                         _PlayerCharacterMovementVelocity.z = _CurrentMovement.z;
+                         
+                         // _PlayerRb.velocity = _CurrentMovement * Time.fixedDeltaTime + new Vector3(0f, _PlayerRb.velocity.y, 0f);
                     }
                     
                     // Follow the player direction with the angle of main camera
-                    _PlayerMovementVelocity = Quaternion.AngleAxis(_CameraTransform.rotation.eulerAngles.y, Vector3.Normalize(Vector3.up)) * _PlayerMovementVelocity;
-                    
-                    // Move player character
-                    _PlayerCharacterController.Move(_PlayerMovementVelocity * Time.deltaTime);
+                    _PlayerCharacterMovementVelocity = Quaternion.AngleAxis(_CameraTransform.rotation.eulerAngles.y, Vector3.Normalize(Vector3.up)) * _PlayerCharacterMovementVelocity;
+
+                    // Move the player's character with Rigidbody (physics) 
+                    _PlayerRb.velocity = _PlayerCharacterMovementVelocity * Time.fixedDeltaTime + new Vector3(0f, _PlayerRb.velocity.y, 0f);
 
                     RotatePlayerDirection();
-
+                    
                     PlayerAnimation.Instance.MovementAnimation(_isMovementPressed);
-
+                    
                     PlayerAnimation.Instance.RunAnimation(_isMovementPressed, _isRunPressed);
-
+                    
                     // Checking for kick action when player is move or running
                     if (_isMovementPressed || _isRunPressed)
                     { 
@@ -355,25 +367,29 @@ namespace Player
           {
                Vector3 PositionToLookAt;
                
-               PositionToLookAt.x = _PlayerMovementVelocity.x;
+               PositionToLookAt.x = _PlayerCharacterMovementVelocity.x;
                PositionToLookAt.y = (float)ZERO;
-               PositionToLookAt.z = _PlayerMovementVelocity.z;
+               PositionToLookAt.z = _PlayerCharacterMovementVelocity.z;
                
                /*
+                // Default position to look at
                PositionToLookAt.x = _CurrentMovement.x;
                PositionToLookAt.y = (float)ZERO;
                PositionToLookAt.z = _CurrentMovement.z;
                */
 
                Quaternion CurrentRotation = gameObject.transform.rotation;
-
-               // _PlayerMovement = _Camera.forward * _PlayerMovement.z + _Camera.right * _PlayerMovement.z;
-
+               
+               // Rotate the player direction
                if (_isMovementPressed)
                {
-                    Quaternion RotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.deltaTime));
+                    Quaternion RotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.fixedDeltaTime));
                     
-                    gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation, RotatePlayerDirection, Mathf.Sin(_rotationSpeed * Time.deltaTime));
+                    // Rotate with Rigidbody physics
+                    _PlayerRb.MoveRotation(Quaternion.Slerp(CurrentRotation.normalized, RotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime)));
+                    
+                    // Rotate with transform
+                    // gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation.normalized, RotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime));
                }
           }
 
@@ -384,104 +400,59 @@ namespace Player
           {
                this.Gravity();
                
-               var isPlayerGrounded = _PlayerCharacterController.isGrounded;
-
-               if (!_isJumping && _isJumpPressed == !false && isPlayerGrounded)
+               if (!_isJumping && _isJumpPressed == !false && _isGrounded)
                {
-                    if (_jumpCounter < 3 && _CurrentJumpResetRoutine != null)
-                    {
-                         StopCoroutine(_CurrentJumpResetRoutine);
-                    }
-
                     _isJumping = true;
-                    
+                    _isJumpAnimating = true;
+
                     _canPunch = false;
 
-                    PlayerAnimation.Instance.JumpAnimation(true);
-
+                    PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
+                    
                     _canPlayJumpSFX = true;
                     
                     if (_canPlayJumpSFX)
                     {
                          SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
                     }
-
-                    _isJumpAnimating = true;
-
-                    _jumpCounter++;
-
-                    PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-
-                    if (_jumpCounter == 3)
-                    {
-                         _canPlayJumpSFX = false;
-
-                         SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
-
-                         SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
-                    }
-
-                    if (_jumpCounter == 2 || _jumpCounter == 3)
-                    {
-                         _canKick = false;
-                         _isKick = false;
-                         
-                         // Debug.Log($"Kick {_canKick} {_jumpCounter}"); // DEBUG
-                    }
-
-                    // Debug.Log($"{gameObject.name} is jump {_jumpCounter}"); // DEBUG
+                    
+                    // Debug.Log("Player jump"); // DEBUG
 
                     // Jump movement
-                    _CurrentMovement.y = _InitialJumpVelocity[_jumpCounter];
-                    _PlayerMovementVelocity.y = _InitialJumpVelocity[_jumpCounter];
+                    _CurrentMovement.y = _jumpVelocity;
+                    _PlayerCharacterMovementVelocity.y = _jumpVelocity;
+                    
+                    // Applied the player jump action with Rigidbody
+                    _PlayerRb.AddForce(_PlayerCharacterMovementVelocity * _maxJumpHeight, ForceMode.Impulse);
+                    
+                    // _PlayerRb.velocity = _CurrentMovement;
+                    // _PlayerRb.velocity = _PlayerCharacterMovementVelocity;
                }
-               else if (!_isJumpPressed == !false && _isJumping && isPlayerGrounded)
+               else if (!_isJumpPressed && _isJumping == true && _isGrounded)
                {
                     _isJumping = false;
-
                     _canPunch = true;
-                    _isKick = true;
 
                     // print("Stop jumping: " + _isJumping); // PRINT
                }
           }
-
+          
           /// <summary>
-          /// Initialize and calculate the jump trajectory with physics
+          /// Initialize and calculate the jump variable
           /// </summary>
           private void InitializeJump()
           {
                var timeApex = _maxJumpTime / 2F;
+
+               // Jump velocity and gravity
+               _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f); // Calculate the jump velocity
+               _gravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 2f), 2f); // Calculate the gravity(fall) of an object
                
                /*
-               // Default concept of first jump velocity & gravity
-               _jumpVelocity = (2f * _maxJumpHeight) / timeApex * 1.25f;
+                // Concept
                _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
+               _jumpVelocity = (2f * _maxJumpHeight) / timeApex;
                */
-               
-               // First jump velocity & gravity
-               _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
-               _gravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
-
-               // Second jump velocity & gravity
-               float secondJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 1f)) / Mathf.Cos(timeApex * 2f);
-               float secondJumpGravity = (-2f * (_maxJumpHeight + 2f)) / Mathf.Pow((timeApex * 1.5f), 2f);
-               
-               // Third jump velocity & gravity
-               // Use this if we use 3 type of jump animation
-               float thirdJumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 3f)) / Mathf.Cos(timeApex * 2f);
-               float thirdJumpGravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 1.5f), 2f);
-               
-               // Initial jump velocity
-               _InitialJumpVelocity.Add(1, _jumpVelocity);
-               _InitialJumpVelocity.Add(2, secondJumpVelocity);
-               _InitialJumpVelocity.Add(3, thirdJumpVelocity);
-               
-               // Initial jump gravity
-               _InitialJumpGravity.Add(ZERO, _gravity);
-               _InitialJumpGravity.Add(1, _gravity);
-               _InitialJumpGravity.Add(2, secondJumpGravity);
-               _InitialJumpGravity.Add(3, thirdJumpGravity);
           }
 
           /// <summary>
@@ -491,28 +462,16 @@ namespace Player
           {
                Boolean isFalling = _CurrentMovement.y <= 0.0f || !_isJumpPressed;
                
-               if (_PlayerCharacterController.isGrounded)
+               if (_isGrounded)
                {
-                    if (_isJumpAnimating == true)
+                    if (_isJumpAnimating)
                     {
-                         PlayerAnimation.Instance.JumpAnimation(false);
-
-                         _isJumpAnimating = false;
-
-                         _CurrentJumpResetRoutine = StartCoroutine(ResetJumpRoutine(0.5f));
-                         
-                         if (_jumpCounter == 3)
-                         {
-                              _jumpCounter = ZERO;
-
-                              PlayerAnimation.Instance.JumpOnTakeAnimation(_jumpCounter);
-                              
-                              // Debug.Log("Slide"); // DEBUG
-                         }
+                         PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
-                    _PlayerMovementVelocity.y = _groundedGravity;
+                    
+                    _PlayerCharacterMovementVelocity.y = _groundedGravity;
                      
                     // Debug.Log($"{gameObject.name} is on the ground"); // DEBUG
                }
@@ -520,35 +479,99 @@ namespace Player
                {
                     var previousYVelocity = _CurrentMovement.y;
                     
-                    _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * _gravityMultiplier * Time.deltaTime);
-                         
+                    _CurrentMovement.y = previousYVelocity + (_gravity * _gravityMultiplier * Time.deltaTime);
+                    
                     // Default applied movement
                     // _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional next velocity of y with max value
-                    _PlayerMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
+                    _PlayerCharacterMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5f, -20.0f);
                }
                else
                {
                     var previousYVelocity = _CurrentMovement.y;
+                    
+                    _CurrentMovement.y = previousYVelocity + (_gravity * Time.deltaTime);
+                    
+                    _PlayerCharacterMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5f;
+               }
+          }
 
-                    _CurrentMovement.y = previousYVelocity + (_InitialJumpGravity[_jumpCounter] * Time.deltaTime);
+          private void OnCollisionEnter(Collision collision)
+          {
+               PlayerGetHit(collision);
 
-                    _PlayerMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
+               var PlayerRb = collision.collider.attachedRigidbody;
+
+               if (PlayerRb == null)
+                    return;
+               
+               if (PlayerRb.gameObject.CompareTag(TagsManager.Rotator))
+               {
+                    _PlayerRagDoll.ActivateRagDollCharacter();
+                    
+                    Debug.Log($"Collision with {collision.gameObject.name}");
+               }
+          }
+
+          private void OnCollisionStay(Collision collisionInfo)
+          {
+               if (collisionInfo.collider)
+               {
+                    _isGrounded = true;
+               }
+          }
+
+          private void OnCollisionExit(Collision other)
+          {
+               if (other.collider)
+               {
+                    _isGrounded = false;
                }
           }
 
           /// <summary>
-          /// Reset jump counter 
+          /// Add force while player's character get hit with obstacles
           /// </summary>
-          /// <param name="timer">float</param>
-          /// <returns>WaitForSeconds</returns>
-          private IEnumerator ResetJumpRoutine(float timer)
+          /// <param name="collision">Collision</param>
+          private void PlayerGetHit(Collision collision)
           {
-               yield return new WaitForSeconds(timer);
+               Rigidbody PlayerRb = collision.collider.attachedRigidbody;
 
-               _jumpCounter = ZERO;
+               if (PlayerRb != null)
+               {
+                    Vector3 ForceDirection = collision.transform.position - gameObject.transform.position;
+
+                    ForceDirection.y = (float)ZERO;
+
+                    ForceDirection.Normalize();
+
+                    PlayerRb.AddForceAtPosition(ForceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
+
+                    // Debug.Log($"Force {gameObject.name}"); // DEBUG
+               }
           }
+
+          /// <summary>
+          /// Check if the player's character is grounded or not
+          /// </summary>
+          /// <returns>bool (Physics.Raycast)</returns>
+          private Boolean IsGrounded()
+          {
+               Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
+               
+               return Physics.Raycast(_PlayerRb.position, -Vector3.up, _distanceToTheGround + 0.1F);
+          }
+
+          /// <summary>
+          /// Player character's Collider component
+          /// </summary>
+          public Collider PlayerCollider => TryGetComponent<Collider>(out var PlayerCollider) ? PlayerCollider : null;
+
+          /// <summary>
+          /// Player character's Rigidbody component
+          /// </summary>
+          public Rigidbody PlayerRigidbody => TryGetComponent<Rigidbody>(out var PlayerRb) ? PlayerRb : null;
 
           /// <summary>
           /// Respawn player when falling out of the level
@@ -561,13 +584,10 @@ namespace Player
                     // With Rigidbody
                     Vector3 PlayerPosition = PlayerRb.transform.position;
 
-                    // With Character Controller
-                    // Vector3 PlayerPosition = _PlayerCharacterController.transform.position;
-
-                    // Reset velocity value
-                    if (_PlayerCharacterController.isGrounded)
+                    // Reset position value if the player is grounded
+                    if (IsGrounded())
                     {
-                         PlayerPosition.y = ZERO;
+                         PlayerPosition.y = (float)ZERO;
                          
                          // Debug.LogAssertion(PlayerPosition.y); // DEBUG ASSERTION
                     }
