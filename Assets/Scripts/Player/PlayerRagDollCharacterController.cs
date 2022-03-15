@@ -8,9 +8,9 @@ namespace Player
     public class PlayerRagDollCharacterController : MonoBehaviour
     {
         // RagDoll character physics controller
-        [Header("RagDoll Character")]
-        [SerializeField] private Rigidbody[] _CharacterBodyPartsRb;
-        [SerializeField] private Collider[] _CharacterBodyPartsCollider;
+        [Header("RagDoll Character's Body Parts")]
+        private Rigidbody[] _CharacterBodyPartsRb;
+        private Collider[] _CharacterBodyPartsCollider;
 
         private PlayerCharacterController _PlayerCharacterController;
         private PlayerAnimation _PlayerAnimation;

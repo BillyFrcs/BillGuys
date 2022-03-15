@@ -46,7 +46,7 @@ namespace Player
           private bool _canPlayJumpSFX;
 
           // Gravity
-          [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 5f)] private float _gravityMultiplier = 1.0f;
+          [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 10f)] private float _gravityMultiplier = 1.0f;
           private float _gravity;
           private float _groundedGravity;
           private bool _isGrounded;
