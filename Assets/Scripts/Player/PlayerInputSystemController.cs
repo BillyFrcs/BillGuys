@@ -39,15 +39,6 @@ namespace Player.InputSystem
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Run"",
-                    ""type"": ""Button"",
-                    ""id"": ""064c155f-4289-45f8-a405-84c7ca0700cb"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""25f8b6f9-4cc6-4cf0-9c9a-be9f996e2d85"",
@@ -239,17 +230,6 @@ namespace Player.InputSystem
                 },
                 {
                     ""name"": """",
-                    ""id"": ""b3b5c2e2-9f90-457e-85c3-7d9bbc1165c4"",
-                    ""path"": ""<Keyboard>/shift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Run"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""1696dfee-6ce2-439f-b132-bad24d859956"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -278,7 +258,6 @@ namespace Player.InputSystem
             // PlayerCharacterController
             m_PlayerCharacterController = asset.FindActionMap("PlayerCharacterController", throwIfNotFound: true);
             m_PlayerCharacterController_Movement = m_PlayerCharacterController.FindAction("Movement", throwIfNotFound: true);
-            m_PlayerCharacterController_Run = m_PlayerCharacterController.FindAction("Run", throwIfNotFound: true);
             m_PlayerCharacterController_Jump = m_PlayerCharacterController.FindAction("Jump", throwIfNotFound: true);
             m_PlayerCharacterController_Dance = m_PlayerCharacterController.FindAction("Dance", throwIfNotFound: true);
             m_PlayerCharacterController_Punch = m_PlayerCharacterController.FindAction("Punch", throwIfNotFound: true);
@@ -344,7 +323,6 @@ namespace Player.InputSystem
         private readonly InputActionMap m_PlayerCharacterController;
         private IPlayerCharacterControllerActions m_PlayerCharacterControllerActionsCallbackInterface;
         private readonly InputAction m_PlayerCharacterController_Movement;
-        private readonly InputAction m_PlayerCharacterController_Run;
         private readonly InputAction m_PlayerCharacterController_Jump;
         private readonly InputAction m_PlayerCharacterController_Dance;
         private readonly InputAction m_PlayerCharacterController_Punch;
@@ -355,7 +333,6 @@ namespace Player.InputSystem
             private @PlayerInputSystemController m_Wrapper;
             public PlayerCharacterControllerActions(@PlayerInputSystemController wrapper) { m_Wrapper = wrapper; }
             public InputAction @Movement => m_Wrapper.m_PlayerCharacterController_Movement;
-            public InputAction @Run => m_Wrapper.m_PlayerCharacterController_Run;
             public InputAction @Jump => m_Wrapper.m_PlayerCharacterController_Jump;
             public InputAction @Dance => m_Wrapper.m_PlayerCharacterController_Dance;
             public InputAction @Punch => m_Wrapper.m_PlayerCharacterController_Punch;
@@ -373,9 +350,6 @@ namespace Player.InputSystem
                     @Movement.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnMovement;
                     @Movement.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnMovement;
                     @Movement.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnMovement;
-                    @Run.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnRun;
-                    @Run.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnRun;
-                    @Run.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnRun;
                     @Jump.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnJump;
                     @Jump.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnJump;
                     @Jump.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnJump;
@@ -398,9 +372,6 @@ namespace Player.InputSystem
                     @Movement.started += instance.OnMovement;
                     @Movement.performed += instance.OnMovement;
                     @Movement.canceled += instance.OnMovement;
-                    @Run.started += instance.OnRun;
-                    @Run.performed += instance.OnRun;
-                    @Run.canceled += instance.OnRun;
                     @Jump.started += instance.OnJump;
                     @Jump.performed += instance.OnJump;
                     @Jump.canceled += instance.OnJump;
@@ -423,7 +394,6 @@ namespace Player.InputSystem
         public interface IPlayerCharacterControllerActions
         {
             void OnMovement(InputAction.CallbackContext context);
-            void OnRun(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnDance(InputAction.CallbackContext context);
             void OnPunch(InputAction.CallbackContext context);

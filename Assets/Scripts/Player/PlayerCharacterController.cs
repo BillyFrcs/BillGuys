@@ -22,7 +22,6 @@ namespace Player
           
           [Header("Player Movement Controller")]
           [Tooltip("Default Movement Speed Of Player Character")] [SerializeField] private float _movementSpeed = 250f;
-          [Tooltip("Run Movement Speed Of Player Character")] [SerializeField] private float _runMovementSpeed = 260;
           private Vector2 _PlayerMovementInput;
           private Vector3 _CurrentMovement;
           private Vector3 _CurrentRunMovement;
@@ -30,8 +29,7 @@ namespace Player
           private Rigidbody _PlayerRb;
           private bool _isMove;
           private bool _isMovementPressed;
-          private bool _isRunPressed;
-          
+
           [Header("Rotate Object Direction")]
           [Tooltip("Rotation Speed To Rotate Player Direction")] [SerializeField] [Range(0, 20)] private float _rotationSpeed = 15f;
 
@@ -39,6 +37,8 @@ namespace Player
           [Tooltip("Set Max Jump Height With Speed")] [field: SerializeField] private float _maxJumpHeight = 1.0f;
           [Tooltip("Set Max Jump Time")] [field: SerializeField] private float _maxJumpTime = 0.75f;
           private float _jumpVelocity;
+          private int _jump;
+          private int _jumpCount;
           private bool _isJump;
           private bool _isJumpPressed;
           private bool _isJumping;
@@ -64,9 +64,10 @@ namespace Player
           private float _dieTimer;
           
           // Constants
-          private const int ZERO = 0;
-          private const float FALL_DIZZY = -10F;
-          private const float FALL_DISTANCE = -40F;
+          private const int Zero= 0;
+          private const float FallDizzy = -10F;
+          private const float FallDistance = -40F;
+          private const int MaxJump = 2;
 
           // Camera
           private Transform _CameraTransform;
@@ -176,11 +177,7 @@ namespace Player
                _PlayerInputController.PlayerCharacterController.Movement.started += OnMovement;
                _PlayerInputController.PlayerCharacterController.Movement.canceled += OnMovement;
                _PlayerInputController.PlayerCharacterController.Movement.performed += OnMovement;
-               
-               // Run movement input action
-               _PlayerInputController.PlayerCharacterController.Run.started += OnRun;
-               _PlayerInputController.PlayerCharacterController.Run.canceled += OnRun;
-               
+
                // Jump input action
                _PlayerInputController.PlayerCharacterController.Jump.started += OnJump;
                _PlayerInputController.PlayerCharacterController.Jump.canceled += OnJump;
@@ -213,29 +210,14 @@ namespace Player
                {
                     _PlayerMovementInput = movementContext.ReadValue<Vector2>();
 
-                    // Player move
+                    // Player movement
                     _CurrentMovement.x = _PlayerMovementInput.x * _movementSpeed;
                     _CurrentMovement.z = _PlayerMovementInput.y * _movementSpeed;
 
-                    // Player run
-                    _CurrentRunMovement.x = _PlayerMovementInput.x * _runMovementSpeed;
-                    _CurrentRunMovement.z = _PlayerMovementInput.y * _runMovementSpeed;
-                    
                     _isMovementPressed = _PlayerMovementInput.x != 0F || _PlayerMovementInput.y != 0F;
 
                     // Debug.Log(movementContext.ReadValue<Vector2>()); // DEBUG
                }
-          }
-
-          /// <summary>
-          /// Player run input action callback
-          /// </summary>
-          /// <param name="runMovementContext">InputAction.CallbackContext</param>
-          public void OnRun(InputAction.CallbackContext runMovementContext)
-          {
-               _isRunPressed = runMovementContext.ReadValueAsButton();
-               
-               // Debug.Log($"Player run: {_isRunPressed}");
           }
 
           /// <summary>
@@ -248,7 +230,7 @@ namespace Player
                {
                     _isJumpPressed = jumpContext.ReadValueAsButton();
 
-                    Debug.Log($"Jump: {_isJumpPressed}"); // DEBUG
+                    // Debug.Log($"Jump: {_isJumpPressed}"); // DEBUG
                }
           }
           
@@ -319,15 +301,7 @@ namespace Player
           {
                if (_isMove)
                {
-                    if (_isRunPressed)
-                    {
-                         // Set player run velocity
-                         _PlayerCharacterMovementVelocity.x = _CurrentRunMovement.x;
-                         _PlayerCharacterMovementVelocity.z = _CurrentRunMovement.z;
-                         
-                         // _PlayerRb.velocity = _CurrentRunMovement * Time.fixedDeltaTime + new Vector3(0f, _PlayerRb.velocity.y, 0f);
-                    }
-                    else
+                    if (_isMovementPressed)
                     {
                          // Set player movement velocity
                          _PlayerCharacterMovementVelocity.x = _CurrentMovement.x;
@@ -335,7 +309,7 @@ namespace Player
                          
                          // _PlayerRb.velocity = _CurrentMovement * Time.fixedDeltaTime + new Vector3(0f, _PlayerRb.velocity.y, 0f);
                     }
-                    
+
                     // Follow the player direction with the angle of main camera
                     _PlayerCharacterMovementVelocity = Quaternion.AngleAxis(_CameraTransform.rotation.eulerAngles.y, Vector3.Normalize(Vector3.up)) * _PlayerCharacterMovementVelocity;
 
@@ -346,10 +320,8 @@ namespace Player
                     
                     PlayerAnimation.Instance.MovementAnimation(_isMovementPressed);
                     
-                    PlayerAnimation.Instance.RunAnimation(_isMovementPressed, _isRunPressed);
-                    
                     // Checking for kick action when player is move or running
-                    if (_isMovementPressed || _isRunPressed)
+                    if (_isMovementPressed)
                     { 
                          _canKick = true;
                     }
@@ -368,7 +340,7 @@ namespace Player
                Vector3 PositionToLookAt;
                
                PositionToLookAt.x = _PlayerCharacterMovementVelocity.x;
-               PositionToLookAt.y = (float)ZERO;
+               PositionToLookAt.y = (float)Zero;
                PositionToLookAt.z = _PlayerCharacterMovementVelocity.z;
                
                /*
@@ -399,41 +371,70 @@ namespace Player
           private void PlayerJump()
           {
                this.Gravity();
-               
-               if (!_isJumping && _isJumpPressed == !false && _isGrounded)
+
+               if (_isJump)
                {
-                    _isJumping = true;
-                    _isJumpAnimating = true;
-
-                    _canPunch = false;
-
-                    PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
-                    
-                    _canPlayJumpSFX = true;
-                    
-                    if (_canPlayJumpSFX)
+                    if (!_isJumping && _isJumpPressed != !true && _jump > 0)
                     {
-                         SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+                         _isJumping = true;
+                         _isJumpAnimating = true;
+
+                         _canPunch = false;
+
+                         // _isGrounded = false;
+
+                         _jump -= 2;
+                         _jumpCount++;
+
+                         PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
+
+                         _canPlayJumpSFX = true;
+
+                         if (_canPlayJumpSFX)
+                         {
+                              SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+                         }
+
+                         if (_jumpCount == 2)
+                         {
+                              _canPlayJumpSFX = false;
+                              
+                              PlayerAnimation.Instance.SlideAnimation(true);
+
+                              Debug.Log("Start double jump"); // DEBUG
+
+                              if (_isGrounded == false)
+                              {
+                                   SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
+
+                                   SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
+                                   
+                                   Debug.Log("Playing double jump SFX"); // DEBUG
+                              }
+                         }
+
+                         // Debug.Log("Player jump"); // DEBUG
+
+                         // Jump movement
+                         _CurrentMovement.y = _jumpVelocity;
+                         _PlayerCharacterMovementVelocity.y = _jumpVelocity;
+
+                         // Applied the player jump action with Rigidbody
+                         _PlayerRb.AddForce(_PlayerCharacterMovementVelocity * _maxJumpHeight, ForceMode.Impulse);
+
+                         // _PlayerRb.velocity = _CurrentMovement;
+                         // _PlayerRb.velocity = _PlayerCharacterMovementVelocity;
+                    }
+                    else if (!_isJumpPressed && _isJumping != !true && _jump > 0)
+                    {
+                         _isJumping = false;
+                         _canPunch = true;
+
+                         // print("Stop jumping: " + _isJumping); // PRINT
                     }
                     
-                    // Debug.Log("Player jump"); // DEBUG
-
-                    // Jump movement
-                    _CurrentMovement.y = _jumpVelocity;
-                    _PlayerCharacterMovementVelocity.y = _jumpVelocity;
-                    
-                    // Applied the player jump action with Rigidbody
-                    _PlayerRb.AddForce(_PlayerCharacterMovementVelocity * _maxJumpHeight, ForceMode.Impulse);
-                    
-                    // _PlayerRb.velocity = _CurrentMovement;
-                    // _PlayerRb.velocity = _PlayerCharacterMovementVelocity;
-               }
-               else if (!_isJumpPressed && _isJumping == true && _isGrounded)
-               {
-                    _isJumping = false;
-                    _canPunch = true;
-
-                    // print("Stop jumping: " + _isJumping); // PRINT
+                    if (_jump == 0)
+                         return;
                }
           }
           
@@ -446,7 +447,7 @@ namespace Player
 
                // Jump velocity and gravity
                _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f); // Calculate the jump velocity
-               _gravity = (-2f * (_maxJumpHeight + 3f)) / Mathf.Pow((timeApex * 2f), 2f); // Calculate the gravity(fall) of an object
+               _gravity = -2f * (_maxJumpHeight + 3f) / Mathf.Pow((timeApex * 2f), 2f); // Calculate the gravity(fall) of an object
                
                /*
                 // Concept
@@ -467,6 +468,11 @@ namespace Player
                     if (_isJumpAnimating)
                     {
                          PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
+
+                         if (_jumpCount == 2)
+                         {
+                              _jumpCount = Zero;
+                         }
                     }
                     
                     _CurrentMovement.y = _groundedGravity;
@@ -479,19 +485,21 @@ namespace Player
                {
                     var previousYVelocity = _CurrentMovement.y;
                     
-                    _CurrentMovement.y = previousYVelocity + (_gravity * _gravityMultiplier * Time.deltaTime);
+                    _CurrentMovement.y = previousYVelocity + _gravity * _gravityMultiplier * Time.deltaTime;
                     
                     // Default applied movement
                     // _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
-                    // Optional next velocity of y with max value
+                    // Optional to applied movement with max value
                     _PlayerCharacterMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5f, -20.0f);
+                    
+                    // Debug.Log($"{gameObject.name} is falling!"); // DEBUG
                }
                else
                {
                     var previousYVelocity = _CurrentMovement.y;
                     
-                    _CurrentMovement.y = previousYVelocity + (_gravity * Time.deltaTime);
+                    _CurrentMovement.y = previousYVelocity + _gravity * Time.deltaTime;
                     
                     _PlayerCharacterMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5f;
                }
@@ -519,6 +527,8 @@ namespace Player
                if (collisionInfo.collider)
                {
                     _isGrounded = true;
+
+                    _jump = MaxJump;
                }
           }
 
@@ -542,7 +552,7 @@ namespace Player
                {
                     Vector3 ForceDirection = collision.transform.position - gameObject.transform.position;
 
-                    ForceDirection.y = (float)ZERO;
+                    ForceDirection.y = (float)Zero;
 
                     ForceDirection.Normalize();
 
@@ -558,9 +568,9 @@ namespace Player
           /// <returns>bool (Physics.Raycast)</returns>
           private Boolean IsGrounded()
           {
-               Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
+               return Physics.Raycast(_PlayerRb.transform.position, -Vector3.up, _distanceToTheGround + 0.1F);
                
-               return Physics.Raycast(_PlayerRb.position, -Vector3.up, _distanceToTheGround + 0.1F);
+               // Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
           }
 
           /// <summary>
@@ -587,12 +597,12 @@ namespace Player
                     // Reset position value if the player is grounded
                     if (IsGrounded())
                     {
-                         PlayerPosition.y = (float)ZERO;
+                         PlayerPosition.y = (float)Zero;
                          
                          // Debug.LogAssertion(PlayerPosition.y); // DEBUG ASSERTION
                     }
 
-                    if (PlayerPosition.y < FALL_DIZZY)
+                    if (PlayerPosition.y < FallDizzy)
                     {
                          _isJump = false;
                          
@@ -601,7 +611,7 @@ namespace Player
                          // Debug.Log("Player dizzy"); // DEBUG
                     }
 
-                    if (PlayerPosition.y < FALL_DISTANCE)
+                    if (PlayerPosition.y < FallDistance)
                     {
                          _isJump = false;
                          

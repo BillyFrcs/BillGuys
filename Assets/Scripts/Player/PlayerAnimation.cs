@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,9 +12,11 @@ namespace Player
         private struct ParameterAnimator
         {
             public static String Movement = "Movement";
+            public static String Velocity = "Velocity";
             public static String Run = "Run";
             public static String Jump = "Jump";
-            public static String JumpOnTake = "Jump On Take";
+            public static String Jumping = "Jumping";
+            public static String Slide = "Slide";
             public static String Dance = "Dance";
             public static String Dizzy = "Dizzy";
             public static String Punch = "Punch";
@@ -21,6 +24,16 @@ namespace Player
             public static String Victory = "Victory";
             public static String Die = "Die";
         }
+
+        // Blend animator controller
+        private float _movementVelocity = 0.0F;
+        [Tooltip("Acceleration Of Blend Movement Animation")] [SerializeField] private float _acceleration = 1F;
+        [Tooltip("Deceleration Of Blend Movement Animation")] [SerializeField] private float _deceleration = 1F;
+
+        private float _jumpVelocity = 0.0F;
+        private float _slideVelocity = 0.0F;
+
+        private const float Damping = 0.05f;
         
         public static PlayerAnimation Instance;
 
@@ -46,55 +59,41 @@ namespace Player
 
         /// <summary>
         /// Playing movement animation
-        /// <param name="isPlayerMove">Boolean</param>
+        /// <param name="isPlayerMovement">Boolean (Check if the player is move)</param>
         /// </summary>
-        public void MovementAnimation(in Boolean isPlayerMove)
+        public void MovementAnimation(in Boolean isPlayerMovement)
         {
             if (TryGetComponent(out Animator PlayerAnimator))
             {
-                bool isPlayerRun = PlayerAnimator.GetBool(ParameterAnimator.Movement);
-                
-                if (isPlayerMove == true && !isPlayerRun)
+                var movementAnimation = Animator.StringToHash(ParameterAnimator.Velocity);
+
+                switch (isPlayerMovement)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.Movement, true);
+                    case true when _movementVelocity < 1.0f:
+                        this._movementVelocity += Time.deltaTime * _acceleration;
                     
-                    // Debug.Log("Move animation"); // DEBUG
+                        // Debug.Log("Accelerate velocity"); // DEBUG
+                        break;
+                    
+                    case false when _movementVelocity > 0.0f:
+                        this._movementVelocity -= Time.deltaTime * _deceleration;
+                    
+                        // Debug.Log("Decelerate velocity"); // DEBUG
+                        break;
                 }
-                else if (!isPlayerMove && isPlayerRun)
+
+                // Reset the movement velocity value
+                if (!isPlayerMovement && _movementVelocity < 0.0f)
                 {
-                    PlayerAnimator.SetBool(ParameterAnimator.Movement, false);
+                    this._movementVelocity = 0.0F;
                     
-                    // Debug.Log("Stop move animation"); // DEBUG
+                    // Debug.Log("Reset velocity"); // DEBUG
                 }
+
+                PlayerAnimator.SetFloat(movementAnimation, _movementVelocity, Damping, Time.deltaTime);
             }
         }
 
-        /// <summary>
-        /// Playing run animation
-        /// <param name="isPlayerMove">Boolean</param>
-        /// <param name="isPlayerRun">Boolean</param>
-        /// </summary>
-        public void RunAnimation(in Boolean isPlayerMove, in Boolean isPlayerRun)
-        {
-            if (TryGetComponent(out Animator PlayerAnimator))
-            {
-                bool isPlayerRunning = PlayerAnimator.GetBool(ParameterAnimator.Run);
-                
-                if (isPlayerMove == true && isPlayerRun && !isPlayerRunning)
-                {
-                    PlayerAnimator.SetBool(ParameterAnimator.Run, true);
-                    
-                    // Debug.Log("Run animation"); // DEBUG
-                }
-                else if (!isPlayerMove || !isPlayerRun && isPlayerRunning)
-                {
-                    PlayerAnimator.SetBool(ParameterAnimator.Run, false);
-                    
-                    // Debug.Log("Stop run animation"); // DEBUG
-                }
-            }
-        }
-        
         /// <summary>
         /// Playing jump animation
         /// </summary>
@@ -103,34 +102,59 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jump);
+                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jumping);
 
-                if (isPlayerJump != false)
+                switch (isPlayerJump)
                 {
-                    PlayerAnimator.SetBool(jumpAnimation, true);
+                    case true when _jumpVelocity < 1.0f:
+                        _jumpVelocity = 0.1f;
+                        break;
                     
-                    // Debug.Log($"Player {gameObject.name} is jump"); // DEBUG
+                    case false when _jumpVelocity > 0.0f:
+                        _jumpVelocity -= 0.1f;
+                        break;
                 }
-                else
-                {
-                    PlayerAnimator.SetBool(jumpAnimation, false);
 
-                    // Debug.Log($"Player {gameObject.name} is not jump"); // DEBUG
+                // Reset the jump velocity value
+                if (!isPlayerJump && _jumpVelocity < 0.0f)
+                {
+                    _jumpVelocity = 0.0f;
                 }
+                
+                PlayerAnimator.SetFloat(jumpAnimation, _jumpVelocity);
             }
         }
         
         /// <summary>
         /// Playing slide animation
         /// </summary>
-        /// <param name="jumpCounter">Int32</param>
-        public void JumpOnTakeAnimation(Int32 jumpCounter)
+        /// <param name="isPlayerSlide">Boolean</param>
+        public void SlideAnimation(Boolean isPlayerSlide)
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var jumpOnTakeAnimation = Animator.StringToHash(ParameterAnimator.JumpOnTake);
+                // var slideAnimation = Animator.StringToHash(ParameterAnimator.Slide);
+                
+                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jumping);
 
-                PlayerAnimator.SetInteger(jumpOnTakeAnimation, jumpCounter);
+                switch (isPlayerSlide)
+                {
+                    case true when _slideVelocity < 1.0f:
+                        _slideVelocity = 1.0f;
+                        break;
+                    
+                    case false when _slideVelocity > 0.0f:
+                        _slideVelocity -= 1.0f;
+                        break;
+                }
+
+                // Reset the jump velocity value
+                if (!isPlayerSlide && _slideVelocity < 0.0f)
+                {
+                    _slideVelocity = 0.0f;
+                }
+                
+                PlayerAnimator.SetFloat(jumpAnimation, _slideVelocity);
             }
         }
 
