@@ -66,7 +66,7 @@ namespace Player
           
           // Constants
           private const int Zero= 0;
-          private const float FallDizzy = -15F;
+          private const float FallDizzy = -5F;
           private const float FallDistance = -40F;
           private const int MaxJump = 2;
 
