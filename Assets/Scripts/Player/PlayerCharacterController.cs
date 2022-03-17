@@ -66,7 +66,7 @@ namespace Player
           
           // Constants
           private const int Zero= 0;
-          private const float FallDizzy = -10F;
+          private const float FallDizzy = -15F;
           private const float FallDistance = -40F;
           private const int MaxJump = 2;
 
@@ -379,11 +379,12 @@ namespace Player
                     {
                          _isJumping = true;
                          _isJumpAnimating = true;
-
+                         
+                         _isPunch = false;
                          _canPunch = false;
-
-                         // _isGrounded = false;
-
+                         _isKick = false;
+                         _canKick = false;
+                         
                          _jump -= 2;
                          _jumpCount++;
 
@@ -400,7 +401,7 @@ namespace Player
                          {
                               _canPlayJumpSFX = false;
                               _canDoubleJump = true;
-                              
+
                               // Debug.Log("Start double jump"); // DEBUG
 
                               if (_canDoubleJump && _isGrounded == false)
@@ -430,7 +431,9 @@ namespace Player
                     else if (!_isJumpPressed && _isJumping != !true && _jump > 0)
                     {
                          _isJumping = false;
-                         _canPunch = true;
+
+                         _isPunch = true;
+                         _isKick = true;
 
                          // print("Stop jumping: " + _isJumping); // PRINT
                     }

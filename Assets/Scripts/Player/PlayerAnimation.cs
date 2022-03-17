@@ -171,11 +171,7 @@ namespace Player
 
                 if (isPlayerDance != false)
                 {
-                    PlayerAnimator.SetBool(danceAnimation, true);
-                }
-                else
-                {
-                    PlayerAnimator.SetBool(danceAnimation, false);
+                    PlayerAnimator.SetTrigger(danceAnimation);
                 }
             }
         }
