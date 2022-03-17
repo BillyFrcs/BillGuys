@@ -44,6 +44,7 @@ namespace Player
           private bool _isJumping;
           private bool _isJumpAnimating;
           private bool _canPlayJumpSFX;
+          private bool _canDoubleJump;
 
           // Gravity
           [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 10f)] private float _gravityMultiplier = 1.0f;
@@ -132,12 +133,12 @@ namespace Player
                PlayerMovement();
                
                // Calculate fast fall of player gravity
-               if (TryGetComponent(out Rigidbody PlayerRb))
+               if (!TryGetComponent(out Rigidbody PlayerRb)) 
+                    return;
+               
+               if (PlayerRb.velocity.y < 0f)
                {
-                    if (PlayerRb.velocity.y < 0f)
-                    {
-                         PlayerRb.velocity += Vector3.up * Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
-                    }
+                    PlayerRb.velocity += Vector3.up * Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
                }
           }
 
@@ -398,18 +399,19 @@ namespace Player
                          if (_jumpCount == 2)
                          {
                               _canPlayJumpSFX = false;
+                              _canDoubleJump = true;
                               
-                              PlayerAnimation.Instance.SlideAnimation(true);
+                              // Debug.Log("Start double jump"); // DEBUG
 
-                              Debug.Log("Start double jump"); // DEBUG
-
-                              if (_isGrounded == false)
+                              if (_canDoubleJump && _isGrounded == false)
                               {
+                                   PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
+
                                    SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
 
                                    SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                                    
-                                   Debug.Log("Playing double jump SFX"); // DEBUG
+                                   // Debug.Log("Playing double jump SFX"); // DEBUG
                               }
                          }
 
@@ -446,13 +448,13 @@ namespace Player
                var timeApex = _maxJumpTime / 2F;
 
                // Jump velocity and gravity
-               _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 2f)) / Mathf.Cos(timeApex * 2f); // Calculate the jump velocity
+               _jumpVelocity = Mathf.Max(2f * (_maxJumpHeight + 1f)) / Mathf.Cos(timeApex * 2f); // Calculate the jump velocity
                _gravity = -2f * (_maxJumpHeight + 3f) / Mathf.Pow((timeApex * 2f), 2f); // Calculate the gravity(fall) of an object
                
                /*
                 // Concept
-               _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
                _jumpVelocity = (2f * _maxJumpHeight) / timeApex;
+               _gravity = (-2f * _maxJumpHeight) / Mathf.Pow(timeApex, 2f);
                */
           }
 
@@ -461,13 +463,14 @@ namespace Player
           /// </summary>
           private void Gravity()
           {
-               Boolean isFalling = _CurrentMovement.y <= 0.0f || !_isJumpPressed;
+               Boolean isFalling = _CurrentMovement.y <= 0.0f || !_isJumpPressed || !_canDoubleJump;
                
                if (_isGrounded)
                {
                     if (_isJumpAnimating)
                     {
                          PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
+                         PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
 
                          if (_jumpCount == 2)
                          {
@@ -527,6 +530,7 @@ namespace Player
                if (collisionInfo.collider)
                {
                     _isGrounded = true;
+                    _canDoubleJump = false;
 
                     _jump = MaxJump;
                }

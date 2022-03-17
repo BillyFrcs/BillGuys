@@ -12,10 +12,7 @@ namespace Player
         private struct ParameterAnimator
         {
             public static String Movement = "Movement";
-            public static String Velocity = "Velocity";
-            public static String Run = "Run";
             public static String Jump = "Jump";
-            public static String Jumping = "Jumping";
             public static String Slide = "Slide";
             public static String Dance = "Dance";
             public static String Dizzy = "Dizzy";
@@ -26,10 +23,14 @@ namespace Player
         }
 
         // Blend animator controller
+        [Tooltip("Acceleration Of Blend Movement Animation")] [SerializeField] private float _movementAcceleration = 1F;
+        [Tooltip("Deceleration Of Blend Movement Animation")] [SerializeField] private float _movementDeceleration = 1F;
+        [Tooltip("Acceleration Of Blend Jump Animation")] [SerializeField] private float _jumpAcceleration = 1F;
+        [Tooltip("Deceleration Of Blend Jump Animation")] [SerializeField] private float _jumpDeceleration = 1F;
+        [Tooltip("Acceleration Of Blend Jump Animation")] [SerializeField] private float _slideAcceleration = 1F;
+        [Tooltip("Deceleration Of Blend Jump Animation")] [SerializeField] private float _slideDeceleration = 1F;
+        
         private float _movementVelocity = 0.0F;
-        [Tooltip("Acceleration Of Blend Movement Animation")] [SerializeField] private float _acceleration = 1F;
-        [Tooltip("Deceleration Of Blend Movement Animation")] [SerializeField] private float _deceleration = 1F;
-
         private float _jumpVelocity = 0.0F;
         private float _slideVelocity = 0.0F;
 
@@ -65,18 +66,18 @@ namespace Player
         {
             if (TryGetComponent(out Animator PlayerAnimator))
             {
-                var movementAnimation = Animator.StringToHash(ParameterAnimator.Velocity);
+                var movementAnimation = Animator.StringToHash(ParameterAnimator.Movement);
 
                 switch (isPlayerMovement)
                 {
                     case true when _movementVelocity < 1.0f:
-                        this._movementVelocity += Time.deltaTime * _acceleration;
+                        this._movementVelocity += Time.deltaTime * _movementAcceleration;
                     
                         // Debug.Log("Accelerate velocity"); // DEBUG
                         break;
                     
                     case false when _movementVelocity > 0.0f:
-                        this._movementVelocity -= Time.deltaTime * _deceleration;
+                        this._movementVelocity -= Time.deltaTime * _movementDeceleration;
                     
                         // Debug.Log("Decelerate velocity"); // DEBUG
                         break;
@@ -102,16 +103,16 @@ namespace Player
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jumping);
+                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jump);
 
                 switch (isPlayerJump)
                 {
                     case true when _jumpVelocity < 1.0f:
-                        _jumpVelocity = 0.1f;
+                        _jumpVelocity = _jumpAcceleration;
                         break;
                     
                     case false when _jumpVelocity > 0.0f:
-                        _jumpVelocity -= 0.1f;
+                        _jumpVelocity -= _jumpDeceleration;
                         break;
                 }
 
@@ -129,32 +130,32 @@ namespace Player
         /// Playing slide animation
         /// </summary>
         /// <param name="isPlayerSlide">Boolean</param>
-        public void SlideAnimation(Boolean isPlayerSlide)
+        public void SlideAnimation(in Boolean isPlayerSlide)
         {
             if (TryGetComponent<Animator>(out var PlayerAnimator))
             {
-                // var slideAnimation = Animator.StringToHash(ParameterAnimator.Slide);
-                
-                var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jumping);
+                var slideAnimation = Animator.StringToHash(ParameterAnimator.Slide);
 
                 switch (isPlayerSlide)
                 {
                     case true when _slideVelocity < 1.0f:
-                        _slideVelocity = 1.0f;
+                        _slideVelocity = _slideAcceleration;
                         break;
                     
                     case false when _slideVelocity > 0.0f:
-                        _slideVelocity -= 1.0f;
+                        _slideVelocity -= _slideDeceleration;
                         break;
                 }
 
-                // Reset the jump velocity value
+                // Reset the slide velocity value
                 if (!isPlayerSlide && _slideVelocity < 0.0f)
                 {
                     _slideVelocity = 0.0f;
+                    
+                    // Debug.Log("Reset slide value"); // DEBUG
                 }
                 
-                PlayerAnimator.SetFloat(jumpAnimation, _slideVelocity);
+                PlayerAnimator.SetFloat(slideAnimation, _slideVelocity);
             }
         }
 

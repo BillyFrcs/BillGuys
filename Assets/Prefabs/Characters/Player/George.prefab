@@ -923,8 +923,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d94389e880da4d94ba8b0318b5b60f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _acceleration: 1
-  _deceleration: 2
+  _movementAcceleration: 1
+  _movementDeceleration: 3
+  _jumpAcceleration: 1
+  _jumpDeceleration: 1
+  _slideAcceleration: 1
+  _slideDeceleration: 1
 --- !u!1 &2254382688777068019
 GameObject:
   m_ObjectHideFlags: 0
