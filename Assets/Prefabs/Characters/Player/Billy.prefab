@@ -4207,9 +4207,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.38
-  m_Height: 2.2
+  m_Height: 2.3411295
   m_Direction: 1
-  m_Center: {x: 0, y: 1.1, z: 0}
+  m_Center: {x: 0, y: 1.1604587, z: 0}
 --- !u!114 &9006833175832651606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4226,7 +4226,7 @@ MonoBehaviour:
   _rotationSpeed: 15
   _maxJumpHeight: 1
   _maxJumpTime: 0.75
-  _gravityMultiplier: 5
+  _gravityMultiplier: 4.5
   _forceMagnitude: 5
 --- !u!114 &3795630445735623741
 MonoBehaviour:

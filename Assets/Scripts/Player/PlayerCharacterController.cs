@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 using Helpers.Tags;
 using Player.InputSystem;
@@ -60,10 +61,7 @@ namespace Player
           // Attack condition
           private bool _canPunch = true;
           private bool _canKick = false;
-          
-          // Timer
-          private float _dieTimer;
-          
+
           // Constants
           private const int Zero= 0;
           private const float FallDizzy = -5F;
@@ -112,8 +110,6 @@ namespace Player
 
                _gravity = -9.81F;
                _groundedGravity = -0.05F;
-
-               _dieTimer = 2.0f;
           }
 
           // Update is called once per frame
@@ -190,11 +186,8 @@ namespace Player
                _PlayerInputController.PlayerCharacterController.Dance.canceled += OnDance;
                
                // Punch input action
-               if (_canPunch)
-               {
-                    _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
-                    _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
-               }
+               _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
+               _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
 
                // Kick input action
                _PlayerInputController.PlayerCharacterController.Kick.performed += OnKick;
@@ -265,6 +258,8 @@ namespace Player
                     if (punchContext.performed)
                     {
                          PlayerAnimation.Instance.PunchAnimation();
+                         
+                         // Debug.Log("Punch: " + punchContext.performed); // DEBUG
                     }
                }
           }
@@ -281,7 +276,7 @@ namespace Player
                     {
                          PlayerAnimation.Instance.KickAnimation();
 
-                         // Debug.Log(kickContext.performed); // DEBUG
+                         // Debug.Log("Kick: " + kickContext.performed); // DEBUG
                     }
                }
           }
@@ -321,18 +316,11 @@ namespace Player
                     
                     PlayerAnimation.Instance.MovementAnimation(_isMovementPressed);
                     
-                    // Checking for kick action when player is move or running
-                    if (_isMovementPressed)
-                    { 
-                         _canKick = true;
-                    }
-                    else
-                    {
-                         _canKick = false;
-                    }
+                    // Start kicking if player is move
+                    _canKick = _isMovementPressed;
                }
           }
-
+          
           /// <summary>
           /// Rotate player direction by movement input action
           /// </summary>
@@ -379,12 +367,10 @@ namespace Player
                     {
                          _isJumping = true;
                          _isJumpAnimating = true;
-                         
-                         _isPunch = false;
+
                          _canPunch = false;
-                         _isKick = false;
                          _canKick = false;
-                         
+
                          _jump -= 2;
                          _jumpCount++;
 
@@ -422,18 +408,19 @@ namespace Player
                          _CurrentMovement.y = _jumpVelocity;
                          _PlayerCharacterMovementVelocity.y = _jumpVelocity;
 
-                         // Applied the player jump action with Rigidbody
+                         // Applied the player jump action with Rigidbody Add Force
                          _PlayerRb.AddForce(_PlayerCharacterMovementVelocity * _maxJumpHeight, ForceMode.Impulse);
-
+                         
+                         // Applied the player jump action with Rigidbody velocity
                          // _PlayerRb.velocity = _CurrentMovement;
                          // _PlayerRb.velocity = _PlayerCharacterMovementVelocity;
                     }
                     else if (!_isJumpPressed && _isJumping != !true && _jump > 0)
                     {
                          _isJumping = false;
-
-                         _isPunch = true;
-                         _isKick = true;
+                         
+                         _canPunch = true;
+                         _canKick = true;
 
                          // print("Stop jumping: " + _isJumping); // PRINT
                     }
@@ -494,7 +481,7 @@ namespace Player
                     _CurrentMovement.y = previousYVelocity + _gravity * _gravityMultiplier * Time.deltaTime;
                     
                     // Default applied movement
-                    // _PlayerMovement.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
+                    // _PlayerCharacterMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional to applied movement with max value
                     _PlayerCharacterMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5f, -20.0f);
@@ -623,13 +610,8 @@ namespace Player
                          _isJump = false;
                          
                          PlayerRb.isKinematic = true;
-
-                         _dieTimer -= Time.deltaTime;
-
-                         if (_dieTimer <= 0F)
-                         {
-                              SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
-                         }
+                         
+                         StartCoroutine(DieCoroutine(1.0f));
 
                          PlayerAnimation.Instance.DieAnimation();
 
@@ -640,6 +622,18 @@ namespace Player
                {
                     throw new System.NullReferenceException("Component hasn't been attached!");
                }
+          }
+
+          /// <summary>
+          /// Die timer to respawn player
+          /// </summary>
+          /// <param name="timer">timer to spawn (float)</param>
+          /// <returns>WaitForSeconds(timer)</returns>
+          private static IEnumerator DieCoroutine(float timer)
+          {
+               yield return new WaitForSeconds(timer);
+               
+               SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
           }
      }
 }

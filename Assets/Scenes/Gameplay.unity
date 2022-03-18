@@ -16721,6 +16721,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1776970750433612879, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8625910204539944429, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -16765,21 +16769,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9006833175832651601, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: m_Height
-      value: 2.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 9006833175832651606, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: _gravityMultiplier
-      value: 4.5
-      objectReference: {fileID: 0}
     - target: {fileID: 9006833175832651607, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
       propertyPath: m_Name
       value: Billy
-      objectReference: {fileID: 0}
-    - target: {fileID: 9006833175832651607, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
