@@ -10,6 +10,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.Interactions;
 using UnityEngine.SceneManagement;
 
 namespace Player
@@ -121,6 +122,13 @@ namespace Player
                PlayerJump();
                
                this.RespawnPlayer();
+               
+#if ENABLE_INPUT_SYSTEM
+               if (Input.GetKeyDown(KeyCode.Q))
+               {
+                    Application.Quit();
+               }
+#endif
           }
 
           // Fixed Update is used for physics calculation
@@ -222,7 +230,10 @@ namespace Player
           {
                if (_isJump)
                {
-                    _isJumpPressed = jumpContext.ReadValueAsButton();
+                    if (jumpContext.interaction is TapInteraction)
+                    {
+                         _isJumpPressed = jumpContext.ReadValueAsButton();
+                    }
 
                     // Debug.Log($"Jump: {_isJumpPressed}"); // DEBUG
                }

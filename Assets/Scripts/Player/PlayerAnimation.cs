@@ -88,7 +88,7 @@ namespace Player
                 {
                     this._movementVelocity = 0.0F;
                     
-                    // Debug.Log("Reset velocity"); // DEBUG
+                    // Debug.Log("Reset movement velocity"); // DEBUG
                 }
 
                 PlayerAnimator.SetFloat(movementAnimation, _movementVelocity, Damping, Time.deltaTime);
@@ -139,18 +139,18 @@ namespace Player
                 switch (isPlayerSlide)
                 {
                     case true when _slideVelocity < 1.0f:
-                        _slideVelocity = _slideAcceleration;
+                        this._slideVelocity += _slideAcceleration;
                         break;
                     
                     case false when _slideVelocity > 0.0f:
-                        _slideVelocity -= _slideDeceleration;
+                        this._slideVelocity -= _slideDeceleration;
                         break;
                 }
 
                 // Reset the slide velocity value
-                if (!isPlayerSlide && _slideVelocity < 0.0f)
+                if (!isPlayerSlide && _slideVelocity <= 0.0f)
                 {
-                    _slideVelocity = 0.0f;
+                    this._slideVelocity = 0.0f;
                     
                     // Debug.Log("Reset slide value"); // DEBUG
                 }

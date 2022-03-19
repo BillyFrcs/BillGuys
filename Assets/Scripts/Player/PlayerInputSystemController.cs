@@ -44,7 +44,7 @@ namespace Player.InputSystem
                     ""id"": ""25f8b6f9-4cc6-4cf0-9c9a-be9f996e2d85"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap(duration=0.04)"",
                     ""initialStateCheck"": false
                 },
                 {
