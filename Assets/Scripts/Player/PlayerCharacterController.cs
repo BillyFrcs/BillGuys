@@ -26,7 +26,6 @@ namespace Player
           [Tooltip("Default Movement Speed Of Player Character")] [SerializeField] private float _movementSpeed = 250f;
           private Vector2 _PlayerMovementInput;
           private Vector3 _CurrentMovement;
-          private Vector3 _CurrentRunMovement;
           private Vector3 _PlayerCharacterMovementVelocity; // This is for applied player movement
           private Rigidbody _PlayerRb;
           private bool _isMove;
