@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Helpers.Tags;
+#if ENABLE_INPUT_SYSTEM
 using Player.InputSystem;
+#endif
 using Sounds.SFX;
 using Unity.Mathematics;
 using UnityEngine;
@@ -51,7 +53,6 @@ namespace Player
           [Tooltip("Gravity Falling Multiplier Of An Object")] [SerializeField] [Range(0f, 10f)] private float _gravityMultiplier = 1.0f;
           private float _gravity;
           private float _groundedGravity;
-          private bool _isGrounded;
           
           // Control animation state
           private bool _isDance;
@@ -76,6 +77,7 @@ namespace Player
           [Tooltip("Force Magnitude To Push Obstacle")] [field: SerializeField] private float _forceMagnitude = 1f;
           private PlayerRagDollCharacterController _PlayerRagDoll;
 
+          private bool _isGrounded;
           private float _distanceToTheGround;
 
           private void Awake()
@@ -126,6 +128,8 @@ namespace Player
                if (Input.GetKeyDown(KeyCode.Q))
                {
                     Application.Quit();
+                    
+                    Debug.Log("Quit Game!"); // DEBUG
                }
 #endif
           }
@@ -382,7 +386,6 @@ namespace Player
                          _canKick = false;
 
                          _jump -= 2;
-                         _jumpCount++;
 
                          PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
 
@@ -391,24 +394,35 @@ namespace Player
                          if (_canPlayJumpSFX)
                          {
                               SoundEffectManager.Instance.PlaySoundEffect("Jump", true);
+                              
+                              // Debug.Log("Jump SFX"); // DEBUG
                          }
 
-                         if (_jumpCount == 2)
+                         _canDoubleJump = true;
+                         
+                         if (_canDoubleJump && _isGrounded == false)
                          {
-                              _canPlayJumpSFX = false;
-                              _canDoubleJump = true;
-
+                              _jumpCount++;
+                         
+                              Debug.Log($"Jump count: {_jumpCount}"); // DEBUG
+                              
+                              PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
+                              
                               // Debug.Log("Start double jump"); // DEBUG
-
-                              if (_canDoubleJump && _isGrounded == false)
+                              
+                              if (_jumpCount >= 1)
                               {
+                                   _canPlayJumpSFX = false;
+                                   
                                    PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
 
                                    SoundEffectManager.Instance.PlaySoundEffect("Jump", false);
 
                                    SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                                    
-                                   Debug.Log("Start double jump"); // DEBUG
+                                   Debug.Log($"Play jump SFX {_canPlayJumpSFX}"); // DEBUG
+                                   
+                                   // Debug.Log("Start double jump"); // DEBUG
                               }
                          }
 
@@ -432,7 +446,7 @@ namespace Player
                          _canPunch = true;
                          _canKick = true;
 
-                         // print("Stop jumping: " + _isJumping); // PRINT
+                         // Debug.Log("Stop jumping: " + _isJumping); // DEBUG
                     }
                     
                     if (_jump == 0)
@@ -472,9 +486,11 @@ namespace Player
                          PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
                          PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
 
-                         if (_jumpCount == 2)
+                         if (_jumpCount >= 2)
                          {
                               _jumpCount = Zero;
+
+                              // Debug.Log($"Reset jump count {_jumpCount}"); // DEBUG
                          }
                     }
                     
@@ -532,7 +548,7 @@ namespace Player
                     _isGrounded = true;
                     _canDoubleJump = false;
                     
-                    Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
+                    // Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
 
                     _jump = MaxJump;
                }
@@ -544,7 +560,7 @@ namespace Player
                {
                     _isGrounded = false;
                     
-                    Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
+                    // Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
                }
           }
 
@@ -576,7 +592,7 @@ namespace Player
           /// <returns>bool (Physics.Raycast)</returns>
           private Boolean IsGrounded()
           {
-               return Physics.Raycast(_PlayerRb.transform.position, -Vector3.up, _distanceToTheGround + 0.1F);
+               return Physics.Raycast(_PlayerRb.transform.position, Vector3.down, _distanceToTheGround + 0.1F);
                
                // Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
           }
