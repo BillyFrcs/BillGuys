@@ -558,13 +558,13 @@ namespace Player
 
                if (playerRb != null)
                {
-                    Vector3 ForceDirection = collision.transform.position - gameObject.transform.position;
+                    Vector3 forceDirection = collision.transform.position - gameObject.transform.position;
 
-                    ForceDirection.y = (float)Zero;
+                    forceDirection.y = (float)Zero;
 
-                    ForceDirection.Normalize();
+                    forceDirection.Normalize();
 
-                    playerRb.AddForceAtPosition(ForceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
+                    playerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
 
                     // Debug.Log($"Force {gameObject.name}"); // DEBUG
                }
