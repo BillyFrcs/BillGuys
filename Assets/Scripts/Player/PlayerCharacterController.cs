@@ -343,10 +343,10 @@ namespace Player
                positionToLookAt.z = _PlayerCharacterMovementVelocity.z;
                
                /*
-                // Default position to look at
-               PositionToLookAt.x = _CurrentMovement.x;
-               PositionToLookAt.y = (float)ZERO;
-               PositionToLookAt.z = _CurrentMovement.z;
+               // Default position to look at
+               positionToLookAt.x = _CurrentMovement.x;
+               positionToLookAt.y = (float)ZERO;
+               positionToLookAt.z = _CurrentMovement.z;
                */
 
                Quaternion currentRotation = gameObject.transform.rotation;
