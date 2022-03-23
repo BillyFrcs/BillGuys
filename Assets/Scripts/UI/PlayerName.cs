@@ -30,10 +30,10 @@ namespace UI
 
         private void LateUpdate()
         {
-            Quaternion CameraRotation = _CameraOffset.transform.rotation;
+            Quaternion cameraRotation = _CameraOffset.transform.rotation;
             
             // Character name look at to the character object position
-            transform.LookAt(gameObject.transform.position + CameraRotation.normalized * Vector3.forward * Time.deltaTime, CameraRotation.normalized * Vector3.up * Time.deltaTime);
+            transform.LookAt(gameObject.transform.position + cameraRotation.normalized * Vector3.forward * Time.deltaTime, cameraRotation.normalized * Vector3.up * Time.deltaTime);
         }
     }
 }

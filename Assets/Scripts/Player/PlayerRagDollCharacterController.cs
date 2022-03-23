@@ -42,16 +42,16 @@ namespace Player
         public void ActivateRagDollCharacter()
         {
             // Player's body parts
-            foreach (Rigidbody PlayerRb in _CharacterBodyPartsRb)
+            foreach (Rigidbody playerRb in _CharacterBodyPartsRb)
             {
-                PlayerRb.isKinematic = false;
-                PlayerRb.interpolation = RigidbodyInterpolation.Interpolate;
-                PlayerRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                playerRb.isKinematic = false;
+                playerRb.interpolation = RigidbodyInterpolation.Interpolate;
+                playerRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }
                
-            foreach (Collider PlayerCollider in _CharacterBodyPartsCollider)
+            foreach (Collider playerCollider in _CharacterBodyPartsCollider)
             {
-                PlayerCollider.isTrigger = false;
+                playerCollider.isTrigger = false;
             }
 
             // Player's character
@@ -69,16 +69,16 @@ namespace Player
         private void DeactivateRagDollCharacter()
         {
             // Player's body parts
-            foreach (Rigidbody PlayerRb in _CharacterBodyPartsRb)
+            foreach (Rigidbody playerRb in _CharacterBodyPartsRb)
             {
-                PlayerRb.isKinematic = true;
-                PlayerRb.interpolation = RigidbodyInterpolation.None;
-                PlayerRb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+                playerRb.isKinematic = true;
+                playerRb.interpolation = RigidbodyInterpolation.None;
+                playerRb.collisionDetectionMode = CollisionDetectionMode.Discrete;
             }
                
-            foreach (Collider PlayerCollider in _CharacterBodyPartsCollider)
+            foreach (Collider playerCollider in _CharacterBodyPartsCollider)
             {
-                PlayerCollider.isTrigger = true;
+                playerCollider.isTrigger = true;
             }
             
             // Player's character

@@ -64,7 +64,7 @@ namespace Player
         /// </summary>
         public void MovementAnimation(in Boolean isPlayerMovement)
         {
-            if (TryGetComponent(out Animator PlayerAnimator))
+            if (TryGetComponent(out Animator playerAnimator))
             {
                 var movementAnimation = Animator.StringToHash(ParameterAnimator.Movement);
 
@@ -91,7 +91,7 @@ namespace Player
                     // Debug.Log("Reset movement velocity"); // DEBUG
                 }
 
-                PlayerAnimator.SetFloat(movementAnimation, _movementVelocity, Damping, Time.deltaTime);
+                playerAnimator.SetFloat(movementAnimation, _movementVelocity, Damping, Time.deltaTime);
             }
         }
 
@@ -101,7 +101,7 @@ namespace Player
         /// <param name="isPlayerJump">Boolean</param>
         public void JumpAnimation(in Boolean isPlayerJump)
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var jumpAnimation = Animator.StringToHash(ParameterAnimator.Jump);
 
@@ -122,7 +122,7 @@ namespace Player
                     _jumpVelocity = 0.0f;
                 }
                 
-                PlayerAnimator.SetFloat(jumpAnimation, _jumpVelocity);
+                playerAnimator.SetFloat(jumpAnimation, _jumpVelocity);
             }
         }
         
@@ -132,7 +132,7 @@ namespace Player
         /// <param name="isPlayerSlide">Boolean</param>
         public void SlideAnimation(in Boolean isPlayerSlide)
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var slideAnimation = Animator.StringToHash(ParameterAnimator.Slide);
 
@@ -155,7 +155,7 @@ namespace Player
                     // Debug.Log("Reset slide value"); // DEBUG
                 }
                 
-                PlayerAnimator.SetFloat(slideAnimation, _slideVelocity);
+                playerAnimator.SetFloat(slideAnimation, _slideVelocity);
             }
         }
 
@@ -165,13 +165,13 @@ namespace Player
         /// <param name="isPlayerDance">Boolean</param>
         public void DanceAnimation(in Boolean isPlayerDance)
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var danceAnimation = Animator.StringToHash(ParameterAnimator.Dance);
 
                 if (isPlayerDance != false)
                 {
-                    PlayerAnimator.SetTrigger(danceAnimation);
+                    playerAnimator.SetTrigger(danceAnimation);
                 }
             }
         }
@@ -181,11 +181,11 @@ namespace Player
         /// </summary>
         public void DizzyAnimation()
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var dizzyAnimation = Animator.StringToHash(ParameterAnimator.Dizzy);
 
-                PlayerAnimator.SetTrigger(dizzyAnimation);
+                playerAnimator.SetTrigger(dizzyAnimation);
             }
         }
 
@@ -194,11 +194,11 @@ namespace Player
         /// </summary>
         public void PunchAnimation()
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var punchAnimation = Animator.StringToHash(ParameterAnimator.Punch);
 
-                PlayerAnimator.SetTrigger(punchAnimation);
+                playerAnimator.SetTrigger(punchAnimation);
             }
         }
         
@@ -207,11 +207,11 @@ namespace Player
         /// </summary>
         public void KickAnimation()
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var kickAnimation = Animator.StringToHash(ParameterAnimator.Kick);
 
-                PlayerAnimator.SetTrigger(kickAnimation);
+                playerAnimator.SetTrigger(kickAnimation);
             }
         }
 
@@ -220,11 +220,11 @@ namespace Player
         /// </summary>
         public void VictoryAnimation()
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var victoryAnimation = Animator.StringToHash(ParameterAnimator.Victory);
 
-                PlayerAnimator.SetTrigger(victoryAnimation);
+                playerAnimator.SetTrigger(victoryAnimation);
             }
         }
 
@@ -233,11 +233,11 @@ namespace Player
         /// </summary>
         public void DieAnimation()
         {
-            if (TryGetComponent<Animator>(out var PlayerAnimator))
+            if (TryGetComponent<Animator>(out var playerAnimator))
             {
                 var dieAnimation = Animator.StringToHash(ParameterAnimator.Die);
                 
-                PlayerAnimator.SetTrigger(dieAnimation);
+                playerAnimator.SetTrigger(dieAnimation);
                 
                 // Debug.Log("Die animation"); // DEBUG
             }
@@ -246,6 +246,6 @@ namespace Player
         /// <summary>
         /// Player character animator component
         /// </summary>
-        public Animator PlayerCharacterAnimator => TryGetComponent(out Animator PlayerAnimator) ? PlayerAnimator : null;
+        public Animator PlayerCharacterAnimator => TryGetComponent(out Animator playerAnimator) ? playerAnimator : null;
     }
 }

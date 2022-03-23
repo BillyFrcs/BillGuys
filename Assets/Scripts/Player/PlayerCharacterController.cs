@@ -136,12 +136,12 @@ namespace Player
                PlayerMovement();
                
                // Calculate fast fall of player gravity
-               if (!TryGetComponent(out Rigidbody PlayerRb)) 
+               if (!TryGetComponent(out Rigidbody playerRb)) 
                     return;
                
-               if (PlayerRb.velocity.y < 0f)
+               if (playerRb.velocity.y < 0f)
                {
-                    PlayerRb.velocity += Vector3.up * Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
+                    playerRb.velocity += Vector3.up * Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
                }
           }
 
@@ -336,11 +336,11 @@ namespace Player
           /// </summary>
           private void RotatePlayerDirection()
           {
-               Vector3 PositionToLookAt;
+               Vector3 positionToLookAt;
                
-               PositionToLookAt.x = _PlayerCharacterMovementVelocity.x;
-               PositionToLookAt.y = (float)Zero;
-               PositionToLookAt.z = _PlayerCharacterMovementVelocity.z;
+               positionToLookAt.x = _PlayerCharacterMovementVelocity.x;
+               positionToLookAt.y = (float)Zero;
+               positionToLookAt.z = _PlayerCharacterMovementVelocity.z;
                
                /*
                 // Default position to look at
@@ -349,15 +349,15 @@ namespace Player
                PositionToLookAt.z = _CurrentMovement.z;
                */
 
-               Quaternion CurrentRotation = gameObject.transform.rotation;
+               Quaternion currentRotation = gameObject.transform.rotation;
                
                // Rotate the player direction
                if (_isMovementPressed)
                {
-                    Quaternion RotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(PositionToLookAt * Time.fixedDeltaTime));
+                    Quaternion rotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(positionToLookAt * Time.fixedDeltaTime));
                     
                     // Rotate with Rigidbody physics
-                    _PlayerRb.MoveRotation(Quaternion.Slerp(CurrentRotation.normalized, RotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime)));
+                    _PlayerRb.MoveRotation(Quaternion.Slerp(currentRotation.normalized, rotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime)));
                     
                     // Rotate with transform
                     // gameObject.transform.rotation = Quaternion.Slerp(CurrentRotation.normalized, RotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime));
@@ -408,7 +408,7 @@ namespace Player
 
                                    SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                                    
-                                   // Debug.Log("Playing double jump SFX"); // DEBUG
+                                   Debug.Log("Start double jump"); // DEBUG
                               }
                          }
 
@@ -512,12 +512,12 @@ namespace Player
           {
                PlayerGetHit(collision);
 
-               var PlayerRb = collision.collider.attachedRigidbody;
+               var playerRb = collision.collider.attachedRigidbody;
 
-               if (PlayerRb == null)
+               if (playerRb == null)
                     return;
                
-               if (PlayerRb.gameObject.CompareTag(TagsManager.Rotator))
+               if (playerRb.gameObject.CompareTag(TagsManager.Rotator))
                {
                     _PlayerRagDoll.ActivateRagDollCharacter();
                     
@@ -531,6 +531,8 @@ namespace Player
                {
                     _isGrounded = true;
                     _canDoubleJump = false;
+                    
+                    Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
 
                     _jump = MaxJump;
                }
@@ -541,6 +543,8 @@ namespace Player
                if (other.collider)
                {
                     _isGrounded = false;
+                    
+                    Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
                }
           }
 
@@ -550,9 +554,9 @@ namespace Player
           /// <param name="collision">Collision</param>
           private void PlayerGetHit(Collision collision)
           {
-               Rigidbody PlayerRb = collision.collider.attachedRigidbody;
+               Rigidbody playerRb = collision.collider.attachedRigidbody;
 
-               if (PlayerRb != null)
+               if (playerRb != null)
                {
                     Vector3 ForceDirection = collision.transform.position - gameObject.transform.position;
 
@@ -560,7 +564,7 @@ namespace Player
 
                     ForceDirection.Normalize();
 
-                    PlayerRb.AddForceAtPosition(ForceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
+                    playerRb.AddForceAtPosition(ForceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
 
                     // Debug.Log($"Force {gameObject.name}"); // DEBUG
                }
@@ -580,12 +584,12 @@ namespace Player
           /// <summary>
           /// Player character's Collider component
           /// </summary>
-          public Collider PlayerCollider => TryGetComponent<Collider>(out var PlayerCollider) ? PlayerCollider : null;
+          public Collider PlayerCollider => TryGetComponent<Collider>(out var playerCollider) ? playerCollider : null;
 
           /// <summary>
           /// Player character's Rigidbody component
           /// </summary>
-          public Rigidbody PlayerRigidbody => TryGetComponent<Rigidbody>(out var PlayerRb) ? PlayerRb : null;
+          public Rigidbody PlayerRigidbody => TryGetComponent<Rigidbody>(out var playerRb) ? playerRb : null;
 
           /// <summary>
           /// Respawn player when falling out of the level
@@ -593,20 +597,20 @@ namespace Player
           /// <exception cref="System.NullReferenceException">throw null reference</exception>
           private void RespawnPlayer()
           {
-               if (TryGetComponent<Rigidbody>(out Rigidbody PlayerRb))
+               if (TryGetComponent<Rigidbody>(out Rigidbody playerRb))
                {
                     // With Rigidbody
-                    Vector3 PlayerPosition = PlayerRb.transform.position;
+                    Vector3 playerPosition = playerRb.transform.position;
 
                     // Reset position value if the player is grounded
                     if (IsGrounded())
                     {
-                         PlayerPosition.y = (float)Zero;
+                         playerPosition.y = (float)Zero;
                          
                          // Debug.LogAssertion(PlayerPosition.y); // DEBUG ASSERTION
                     }
 
-                    if (PlayerPosition.y < FallDizzy)
+                    if (playerPosition.y < FallDizzy)
                     {
                          _isJump = false;
                          
@@ -615,11 +619,11 @@ namespace Player
                          // Debug.Log("Player dizzy"); // DEBUG
                     }
 
-                    if (PlayerPosition.y < FallDistance)
+                    if (playerPosition.y < FallDistance)
                     {
                          _isJump = false;
                          
-                         PlayerRb.isKinematic = true;
+                         playerRb.isKinematic = true;
                          
                          StartCoroutine(DieCoroutine(1.0f));
 

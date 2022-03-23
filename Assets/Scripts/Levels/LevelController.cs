@@ -44,22 +44,22 @@ namespace Levels
         {
             if (_rotateAnimation)
             {
-                transform.DORotate(new Vector3(0f, 360f, 0f), _rotate * 0.5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+                gameObject.transform.DORotate(new Vector3(0f, 360f, 0f), _rotate * 0.5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
             }
 
             if (_doorAnimation)
             {
-                transform.DOMoveY(transform.position.y + 2.6f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
+                gameObject.transform.DOMoveY(transform.position.y + 2.6f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
             }
 
             if (_rotatorUpAnimation)
             {
-                transform.DORotate(new Vector3(0f, 360f, 0f), _rotatorUp * 0.5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+                gameObject.transform.DORotate(new Vector3(0f, 360f, 0f), _rotatorUp * 0.5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
             }
 
             if (_droneAnimation)
             {
-                transform.DOMoveY(transform.position.y + 1f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
+                gameObject.transform.DOMoveY(transform.position.y + 1f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
             }
         }
     }

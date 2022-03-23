@@ -49,19 +49,19 @@ namespace Sounds.SFX
                 Destroy(gameObject);
             }
 
-            foreach (var SoundEffect in _SoundEffects)
+            foreach (var soundEffect in _SoundEffects)
             {
-                SoundEffect.SoundEffectsSource = gameObject.AddComponent<AudioSource>();
+                soundEffect.SoundEffectsSource = gameObject.AddComponent<AudioSource>();
 
-                SoundEffect.SoundEffectsSource.clip = SoundEffect.Clip;
+                soundEffect.SoundEffectsSource.clip = soundEffect.Clip;
 
-                SoundEffect.SoundEffectsSource.outputAudioMixerGroup = SoundEffect.Mixer;
+                soundEffect.SoundEffectsSource.outputAudioMixerGroup = soundEffect.Mixer;
 
-                SoundEffect.SoundEffectsSource.volume = SoundEffect.volume;
+                soundEffect.SoundEffectsSource.volume = soundEffect.volume;
 
-                SoundEffect.SoundEffectsSource.pitch = SoundEffect.pitch;
+                soundEffect.SoundEffectsSource.pitch = soundEffect.pitch;
 
-                SoundEffect.SoundEffectsSource.loop = SoundEffect.canLoop;
+                soundEffect.SoundEffectsSource.loop = soundEffect.canLoop;
             }
         }
 
@@ -72,15 +72,15 @@ namespace Sounds.SFX
         /// <param name="isPlay">Boolean</param>
         public void PlaySoundEffect(String soundName, Boolean isPlay = false)
         {
-            var SoundEffect = Array.Find(_SoundEffects, soundItem => soundItem.name == soundName);
+            var soundEffect = Array.Find(_SoundEffects, soundItem => soundItem.name == soundName);
 
             if (isPlay)
             {
-                SoundEffect.SoundEffectsSource.Play();
+                soundEffect.SoundEffectsSource.Play();
             }
             else
             {
-                SoundEffect.SoundEffectsSource.Stop();
+                soundEffect.SoundEffectsSource.Stop();
             }
         }
     }
