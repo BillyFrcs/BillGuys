@@ -16,7 +16,6 @@ namespace Player
             public static String Slide = "Slide";
             public static String Dance = "Dance";
             public static String Dizzy = "Dizzy";
-            public static String Punch = "Punch";
             public static String Kick = "Kick";
             public static String Victory = "Victory";
             public static String Die = "Die";
@@ -189,19 +188,6 @@ namespace Player
             }
         }
 
-        /// <summary>
-        /// Playing punch animation
-        /// </summary>
-        public void PunchAnimation()
-        {
-            if (TryGetComponent<Animator>(out var playerAnimator))
-            {
-                var punchAnimation = Animator.StringToHash(ParameterAnimator.Punch);
-
-                playerAnimator.SetTrigger(punchAnimation);
-            }
-        }
-        
         /// <summary>
         /// Playing kick animation
         /// </summary>

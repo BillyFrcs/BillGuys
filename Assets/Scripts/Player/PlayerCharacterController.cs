@@ -56,11 +56,9 @@ namespace Player
           
           // Control animation state
           private bool _isDance;
-          private bool _isPunch;
           private bool _isKick;
           
           // Attack condition
-          private bool _canPunch = true;
           private bool _canKick = false;
 
           // Constants
@@ -107,7 +105,6 @@ namespace Player
                _isJumpPressed = false;
                _isJumpAnimating = false;
                _isDance = true;
-               _isPunch = true;
                _isKick = true;
 
                _gravity = -9.81F;
@@ -195,10 +192,6 @@ namespace Player
                // Dance input action
                _PlayerInputController.PlayerCharacterController.Dance.started += OnDance;
                _PlayerInputController.PlayerCharacterController.Dance.canceled += OnDance;
-               
-               // Punch input action
-               _PlayerInputController.PlayerCharacterController.Punch.performed += OnPunch;
-               _PlayerInputController.PlayerCharacterController.Punch.canceled += OnPunch;
 
                // Kick input action
                _PlayerInputController.PlayerCharacterController.Kick.performed += OnKick;
@@ -262,23 +255,6 @@ namespace Player
           }
 
           /// <summary>
-          /// Player punch input action callback 
-          /// </summary>
-          /// <param name="punchContext">InputAction.CallbackContext</param>
-          public void OnPunch(InputAction.CallbackContext punchContext)
-          {
-               if (_isPunch && _canPunch)
-               {
-                    if (punchContext.performed)
-                    {
-                         PlayerAnimation.Instance.PunchAnimation();
-                         
-                         // Debug.Log("Punch: " + punchContext.performed); // DEBUG
-                    }
-               }
-          }
-
-          /// <summary>
           /// Player kicked input action callback
           /// </summary>
           /// <param name="kickContext">InputAction.CallbackContext</param>
@@ -332,6 +308,8 @@ namespace Player
                     
                     // Start kicking if player is move
                     _canKick = _isMovementPressed;
+
+                    _isDance = !_isMovementPressed;
                }
           }
           
@@ -381,9 +359,9 @@ namespace Player
                     {
                          _isJumping = true;
                          _isJumpAnimating = true;
-
-                         _canPunch = false;
+                         
                          _canKick = false;
+                         _isDance = false;
 
                          _jump -= 2;
 
@@ -404,7 +382,7 @@ namespace Player
                          {
                               _jumpCount++;
                          
-                              Debug.Log($"Jump count: {_jumpCount}"); // DEBUG
+                              // Debug.Log($"Jump count: {_jumpCount}"); // DEBUG
                               
                               PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
                               
@@ -420,7 +398,7 @@ namespace Player
 
                                    SoundEffectManager.Instance.PlaySoundEffect("Slide", true);
                                    
-                                   Debug.Log($"Play jump SFX {_canPlayJumpSFX}"); // DEBUG
+                                   // Debug.Log($"Play jump SFX {_canPlayJumpSFX}"); // DEBUG
                                    
                                    // Debug.Log("Start double jump"); // DEBUG
                               }
@@ -443,8 +421,8 @@ namespace Player
                     {
                          _isJumping = false;
                          
-                         _canPunch = true;
                          _canKick = true;
+                         _isDance = true;
 
                          // Debug.Log("Stop jumping: " + _isJumping); // DEBUG
                     }

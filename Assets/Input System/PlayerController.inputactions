@@ -33,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Punch",
-                    "type": "Button",
-                    "id": "483e1278-bb98-4a57-90ea-54cc3be5a61a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Kick",
                     "type": "Button",
                     "id": "f7978945-6de9-44ff-8938-e293c6fb6d4d",
@@ -203,17 +194,6 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "1696dfee-6ce2-439f-b132-bad24d859956",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Punch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

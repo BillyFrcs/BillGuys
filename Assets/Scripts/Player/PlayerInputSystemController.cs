@@ -57,15 +57,6 @@ namespace Player.InputSystem
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Punch"",
-                    ""type"": ""Button"",
-                    ""id"": ""483e1278-bb98-4a57-90ea-54cc3be5a61a"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Kick"",
                     ""type"": ""Button"",
                     ""id"": ""f7978945-6de9-44ff-8938-e293c6fb6d4d"",
@@ -230,17 +221,6 @@ namespace Player.InputSystem
                 },
                 {
                     ""name"": """",
-                    ""id"": ""1696dfee-6ce2-439f-b132-bad24d859956"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Punch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""083a4b6f-eb8e-42bd-bddc-ed2983a56125"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
@@ -260,7 +240,6 @@ namespace Player.InputSystem
             m_PlayerCharacterController_Movement = m_PlayerCharacterController.FindAction("Movement", throwIfNotFound: true);
             m_PlayerCharacterController_Jump = m_PlayerCharacterController.FindAction("Jump", throwIfNotFound: true);
             m_PlayerCharacterController_Dance = m_PlayerCharacterController.FindAction("Dance", throwIfNotFound: true);
-            m_PlayerCharacterController_Punch = m_PlayerCharacterController.FindAction("Punch", throwIfNotFound: true);
             m_PlayerCharacterController_Kick = m_PlayerCharacterController.FindAction("Kick", throwIfNotFound: true);
             m_PlayerCharacterController_Look = m_PlayerCharacterController.FindAction("Look", throwIfNotFound: true);
         }
@@ -325,7 +304,6 @@ namespace Player.InputSystem
         private readonly InputAction m_PlayerCharacterController_Movement;
         private readonly InputAction m_PlayerCharacterController_Jump;
         private readonly InputAction m_PlayerCharacterController_Dance;
-        private readonly InputAction m_PlayerCharacterController_Punch;
         private readonly InputAction m_PlayerCharacterController_Kick;
         private readonly InputAction m_PlayerCharacterController_Look;
         public struct PlayerCharacterControllerActions
@@ -335,7 +313,6 @@ namespace Player.InputSystem
             public InputAction @Movement => m_Wrapper.m_PlayerCharacterController_Movement;
             public InputAction @Jump => m_Wrapper.m_PlayerCharacterController_Jump;
             public InputAction @Dance => m_Wrapper.m_PlayerCharacterController_Dance;
-            public InputAction @Punch => m_Wrapper.m_PlayerCharacterController_Punch;
             public InputAction @Kick => m_Wrapper.m_PlayerCharacterController_Kick;
             public InputAction @Look => m_Wrapper.m_PlayerCharacterController_Look;
             public InputActionMap Get() { return m_Wrapper.m_PlayerCharacterController; }
@@ -356,9 +333,6 @@ namespace Player.InputSystem
                     @Dance.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnDance;
                     @Dance.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnDance;
                     @Dance.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnDance;
-                    @Punch.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnPunch;
-                    @Punch.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnPunch;
-                    @Punch.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnPunch;
                     @Kick.started -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
                     @Kick.performed -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
                     @Kick.canceled -= m_Wrapper.m_PlayerCharacterControllerActionsCallbackInterface.OnKick;
@@ -378,9 +352,6 @@ namespace Player.InputSystem
                     @Dance.started += instance.OnDance;
                     @Dance.performed += instance.OnDance;
                     @Dance.canceled += instance.OnDance;
-                    @Punch.started += instance.OnPunch;
-                    @Punch.performed += instance.OnPunch;
-                    @Punch.canceled += instance.OnPunch;
                     @Kick.started += instance.OnKick;
                     @Kick.performed += instance.OnKick;
                     @Kick.canceled += instance.OnKick;
@@ -396,7 +367,6 @@ namespace Player.InputSystem
             void OnMovement(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnDance(InputAction.CallbackContext context);
-            void OnPunch(InputAction.CallbackContext context);
             void OnKick(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
         }
