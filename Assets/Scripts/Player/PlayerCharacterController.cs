@@ -59,10 +59,10 @@ namespace Player
           private bool _isKick;
           
           // Attack condition
-          private bool _canKick = false;
+          private bool _canKick = true;
 
           // Constants
-          private const int Zero= 0;
+          private const int Zero = 0;
           private const float FallDizzy = -5F;
           private const float FallDistance = -40F;
           private const int MaxJump = 2;
@@ -142,7 +142,7 @@ namespace Player
                
                if (playerRb.velocity.y < 0f)
                {
-                    playerRb.velocity += Vector3.up * Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
+                    playerRb.velocity += Vector3.up * (Physics.gravity.y * _gravityMultiplier * Time.deltaTime);
                }
           }
 
@@ -305,9 +305,6 @@ namespace Player
                     RotatePlayerDirection();
                     
                     PlayerAnimation.Instance.MovementAnimation(_isMovementPressed);
-                    
-                    // Start kicking if player is move
-                    _canKick = _isMovementPressed;
 
                     _isDance = !_isMovementPressed;
                }
@@ -360,7 +357,6 @@ namespace Player
                          _isJumping = true;
                          _isJumpAnimating = true;
                          
-                         _canKick = false;
                          _isDance = false;
 
                          _jump -= 2;
@@ -421,7 +417,7 @@ namespace Player
                     {
                          _isJumping = false;
                          
-                         _canKick = true;
+                         // _canKick = true;
                          _isDance = true;
 
                          // Debug.Log("Stop jumping: " + _isJumping); // DEBUG
@@ -525,10 +521,14 @@ namespace Player
                {
                     _isGrounded = true;
                     _canDoubleJump = false;
+                    _canKick = true;
+                    
+                    // Start kicking if player is move on the ground
+                    _canKick = _isMovementPressed;
+                    
+                    _jump = MaxJump;
                     
                     // Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
-
-                    _jump = MaxJump;
                }
           }
 
@@ -537,7 +537,8 @@ namespace Player
                if (other.collider)
                {
                     _isGrounded = false;
-                    
+                    _canKick = false;
+
                     // Debug.Log($"Is grounded {_isGrounded}"); // DEBUG
                }
           }
