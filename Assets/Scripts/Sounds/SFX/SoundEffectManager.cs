@@ -1,17 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Helpers.Interfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Sounds.SFX
 {
-    public interface ISoundManager
-    {
-        public void PlaySoundEffect(String soundName, Boolean isPlay);
-    }
-
     [Serializable]
     public class Sound
     {

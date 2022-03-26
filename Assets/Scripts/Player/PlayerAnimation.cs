@@ -15,7 +15,7 @@ namespace Player
         [Tooltip("Acceleration Of Blend Movement Animation")] [SerializeField] public float movementAcceleration = 1F;
         [Tooltip("Deceleration Of Blend Movement Animation")] [SerializeField] public float movementDeceleration = 3F;
         
-        [HideInInspector] public float movementVelocity = 0.0F;
+        [HideInInspector] public float MovementVelocity { get; set; }
         
         #endregion
     }
@@ -28,7 +28,7 @@ namespace Player
         [Tooltip("Acceleration Of Blend Jump Animation")] [SerializeField] public float jumpAcceleration = 1F;
         [Tooltip("Deceleration Of Blend Jump Animation")] [SerializeField] public float jumpDeceleration = 1F;
         
-        [HideInInspector] public float jumpVelocity = 0.0F;
+        [HideInInspector] public float JumpVelocity { get; set; }
         
         #endregion
     }
@@ -41,7 +41,7 @@ namespace Player
         [Tooltip("Acceleration Of Blend Jump Animation")] [SerializeField] public float slideAcceleration = 1F;
         [Tooltip("Deceleration Of Blend Jump Animation")] [SerializeField] public float slideDeceleration = 1F;
         
-        [HideInInspector] public float slideVelocity = 0.0F;
+        [HideInInspector] public float SlideVelocity { get; set; }
 
         #endregion
     }
@@ -68,7 +68,7 @@ namespace Player
         
         private const float Damping = 0.05f;
         
-        public static PlayerAnimation Instance;
+        public static PlayerAnimation Instance { get; private set; }
 
         private void Awake()
         {
@@ -102,31 +102,31 @@ namespace Player
 
                 switch (isPlayerMovement)
                 {
-                    case true when _MovementAnimation.movementVelocity < 1.0f:
-                        this._MovementAnimation.movementVelocity += Time.deltaTime * _MovementAnimation.movementAcceleration;
+                    case true when _MovementAnimation.MovementVelocity < 1.0f:
+                        this._MovementAnimation.MovementVelocity += Time.deltaTime * _MovementAnimation.movementAcceleration;
                     
                         // Debug.Log("Accelerate velocity"); // DEBUG
                         break;
                     
-                    case false when _MovementAnimation.movementVelocity > 0.0f:
-                        this._MovementAnimation.movementVelocity -= Time.deltaTime * _MovementAnimation.movementDeceleration;
+                    case false when _MovementAnimation.MovementVelocity > 0.0f:
+                        this._MovementAnimation.MovementVelocity -= Time.deltaTime * _MovementAnimation.movementDeceleration;
                     
                         // Debug.Log("Decelerate velocity"); // DEBUG
                         break;
                 }
 
                 // Reset the movement velocity value
-                if (!isPlayerMovement && _MovementAnimation.movementVelocity < 0.0f)
+                if (!isPlayerMovement && _MovementAnimation.MovementVelocity < 0.0f)
                 {
-                    this._MovementAnimation.movementVelocity = 0.0F;
+                    this._MovementAnimation.MovementVelocity = 0.0F;
                     
                     // Debug.Log("Reset movement velocity"); // DEBUG
                 }
 
-                playerAnimator.SetFloat(movementAnimation, _MovementAnimation.movementVelocity, Damping, Time.deltaTime);
+                playerAnimator.SetFloat(movementAnimation, _MovementAnimation.MovementVelocity, Damping, Time.deltaTime);
             }
         }
-
+        
         /// <summary>
         /// Playing jump animation
         /// </summary>
@@ -139,22 +139,22 @@ namespace Player
 
                 switch (isPlayerJump)
                 {
-                    case true when _JumpAnimation.jumpVelocity < 1.0f:
-                        _JumpAnimation.jumpVelocity = _JumpAnimation.jumpAcceleration;
+                    case true when _JumpAnimation.JumpVelocity < 1.0f:
+                        _JumpAnimation.JumpVelocity = _JumpAnimation.jumpAcceleration;
                         break;
                     
-                    case false when _JumpAnimation.jumpVelocity > 0.0f:
-                        _JumpAnimation.jumpVelocity -= _JumpAnimation.jumpDeceleration;
+                    case false when _JumpAnimation.JumpVelocity > 0.0f:
+                        _JumpAnimation.JumpVelocity -= _JumpAnimation.jumpDeceleration;
                         break;
                 }
 
                 // Reset the jump velocity value
-                if (!isPlayerJump && _JumpAnimation.jumpVelocity < 0.0f)
+                if (!isPlayerJump && _JumpAnimation.JumpVelocity < 0.0f)
                 {
-                    _JumpAnimation.jumpVelocity = 0.0f;
+                    _JumpAnimation.JumpVelocity = 0.0f;
                 }
                 
-                playerAnimator.SetFloat(jumpAnimation, _JumpAnimation.jumpVelocity);
+                playerAnimator.SetFloat(jumpAnimation, _JumpAnimation.JumpVelocity);
             }
         }
         
@@ -170,24 +170,24 @@ namespace Player
 
                 switch (isPlayerSlide)
                 {
-                    case true when _SlideAnimation.slideVelocity < 1.0f:
-                        this._SlideAnimation.slideVelocity += _SlideAnimation.slideAcceleration;
+                    case true when _SlideAnimation.SlideVelocity < 1.0f:
+                        this._SlideAnimation.SlideVelocity += _SlideAnimation.slideAcceleration;
                         break;
                     
-                    case false when _SlideAnimation.slideVelocity > 0.0f:
-                        this._SlideAnimation.slideVelocity -= _SlideAnimation.slideDeceleration;
+                    case false when _SlideAnimation.SlideVelocity > 0.0f:
+                        this._SlideAnimation.SlideVelocity -= _SlideAnimation.slideDeceleration;
                         break;
                 }
 
                 // Reset the slide velocity value
-                if (!isPlayerSlide && _SlideAnimation.slideVelocity <= 0.0f)
+                if (!isPlayerSlide && _SlideAnimation.SlideVelocity <= 0.0f)
                 {
-                    this._SlideAnimation.slideVelocity = 0.0f;
+                    this._SlideAnimation.SlideVelocity = 0.0f;
                     
                     // Debug.Log("Reset slide value"); // DEBUG
                 }
                 
-                playerAnimator.SetFloat(slideAnimation, _SlideAnimation.slideVelocity);
+                playerAnimator.SetFloat(slideAnimation, _SlideAnimation.SlideVelocity);
             }
         }
 
@@ -261,7 +261,7 @@ namespace Player
                 // Debug.Log("Die animation"); // DEBUG
             }
         }
-        
+
         /// <summary>
         /// Player character animator component
         /// </summary>

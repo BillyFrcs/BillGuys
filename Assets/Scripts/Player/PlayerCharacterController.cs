@@ -266,6 +266,8 @@ namespace Player
                     {
                          PlayerAnimation.Instance.KickAnimation();
 
+                         SoundEffectManager.Instance.PlaySoundEffect("Kick", true);
+
                          // Debug.Log("Kick: " + kickContext.performed); // DEBUG
                     }
                }
@@ -335,7 +337,7 @@ namespace Player
                {
                     Quaternion rotatePlayerDirection = Quaternion.LookRotation(Vector3.Normalize(positionToLookAt * Time.fixedDeltaTime));
                     
-                    // Rotate with Rigidbody physics
+                    // Rotate with Rigidbody rotation
                     _PlayerRb.MoveRotation(Quaternion.Slerp(currentRotation.normalized, rotatePlayerDirection.normalized, Mathf.Sin(_rotationSpeed * Time.fixedDeltaTime)));
                     
                     // Rotate with transform
@@ -632,7 +634,7 @@ namespace Player
                     throw new System.NullReferenceException("Component hasn't been attached!");
                }
           }
-
+          
           /// <summary>
           /// Die timer to respawn player
           /// </summary>

@@ -2,16 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Helpers.Interfaces;
 using UnityEngine;
 using Random = System.Random;
 
 namespace Levels
 {
-    public interface ILevelController
-    {
-        public void LevelObjectAnimation();
-    }
-    
     public class LevelController : MonoBehaviour, ILevelController
     {
         [Header("Types Of Animation")] 

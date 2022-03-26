@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Helpers.Interfaces;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerRagDollCharacterController : MonoBehaviour
+    public class PlayerRagDollCharacterController : MonoBehaviour, IPlayerRagDollCharacterController
     {
         // RagDoll character physics controller
         [Header("RagDoll Character's Body Parts")]
@@ -66,7 +67,7 @@ namespace Player
         /// <summary>
         /// Deactivate RagDoll physics simulation to the player's character
         /// </summary>
-        private void DeactivateRagDollCharacter()
+        public void DeactivateRagDollCharacter()
         {
             // Player's body parts
             foreach (Rigidbody playerRb in _CharacterBodyPartsRb)
