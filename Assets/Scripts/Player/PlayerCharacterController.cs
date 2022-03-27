@@ -60,6 +60,7 @@ namespace Player
           
           // Attack condition
           private bool _canKick = true;
+          private bool _isKickPressed = false;
 
           // Constants
           private const int Zero = 0;
@@ -118,11 +119,13 @@ namespace Player
                _PlayerCharacterMovementVelocity = new Vector3(_PlayerMovementInput.x, 0f, _PlayerMovementInput.y).normalized;
                
                PlayerJump();
-               
+
+               PlayerAttack();
+
                this.RespawnPlayer();
                
 #if ENABLE_INPUT_SYSTEM
-               if (Input.GetKeyDown(KeyCode.Q))
+              if (Input.GetKeyDown(KeyCode.Q))
                {
                     Application.Quit();
                     
@@ -194,7 +197,7 @@ namespace Player
                _PlayerInputController.PlayerCharacterController.Dance.canceled += OnDance;
 
                // Kick input action
-               _PlayerInputController.PlayerCharacterController.Kick.performed += OnKick;
+               _PlayerInputController.PlayerCharacterController.Kick.started += OnKick;
                _PlayerInputController.PlayerCharacterController.Kick.canceled += OnKick;
           }
 
@@ -262,14 +265,20 @@ namespace Player
           {
                if (_isKick && _canKick)
                {
-                    if (kickContext.performed)
-                    {
-                         PlayerAnimation.Instance.KickAnimation();
+                   _isKickPressed = kickContext.ReadValueAsButton();
 
-                         SoundEffectManager.Instance.PlaySoundEffect("Kick", true);
+                   if (kickContext.started)
+                   {
+                       PlayerAnimation.Instance.KickAnimation();
 
-                         // Debug.Log("Kick: " + kickContext.performed); // DEBUG
-                    }
+                       SoundEffectManager.Instance.PlaySoundEffect("Kick", true);
+
+                       // Debug.Log("Kick: " + _isKickPressed); // DEBUG
+                   }
+                   else if (kickContext.canceled)
+                   {
+                       SoundEffectManager.Instance.PlaySoundEffect("Kick", false);
+                   }
                }
           }
 
@@ -498,6 +507,22 @@ namespace Player
                     
                     _PlayerCharacterMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5f;
                }
+          }
+
+          /// <summary>
+          /// Player attack controller
+          /// </summary>
+          private void PlayerAttack()
+          {
+              // Player kicking
+              if (_isKickPressed)
+              { 
+                  _isJump = false;
+              }
+              else
+              { 
+                  _isJump = true;
+              }
           }
 
           private void OnCollisionEnter(Collision collision)

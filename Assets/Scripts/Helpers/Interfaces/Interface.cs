@@ -1,3 +1,4 @@
+using Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,12 +12,26 @@ namespace Helpers.Interfaces
         public void DeactivateRagDollCharacter();
     }
     
-    public interface ILevelController
+    public interface IPlayerAnimation
+    {
+        public void MovementAnimation(in Boolean isPlayerMovement);
+        public void JumpAnimation(in Boolean isPlayerJump);
+        public void SlideAnimation(in Boolean isPlayerSlide);
+        public void DanceAnimation(in Boolean isPlayerDance);
+        public void DizzyAnimation();
+        public void KickAnimation();
+        public void VictoryAnimation();
+        public void DieAnimation();
+
+        public Animator PlayerCharacterAnimator { get; }
+    }
+    
+    internal interface ILevelController
     {
         public void LevelObjectAnimation();
     }
 
-    public interface ISoundManager
+    internal interface ISoundManager
     {
         public void PlaySoundEffect(String soundName, Boolean isPlay);
     }

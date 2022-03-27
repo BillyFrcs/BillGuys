@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Helpers.Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,7 +47,7 @@ namespace Player
         #endregion
     }
 
-    public class PlayerAnimation : MonoBehaviour
+    public class PlayerAnimation : MonoBehaviour, IPlayerAnimation
     {
         private struct ParameterAnimator
         {
