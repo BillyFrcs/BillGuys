@@ -61,7 +61,6 @@ namespace Player
             _PlayerCharacterController.PlayerRigidbody.constraints = RigidbodyConstraints.None;
             
             _PlayerAnimation.PlayerCharacterAnimator.enabled = false;
-            _PlayerAnimation.PlayerCharacterAnimator.avatar = null;
         }
         
         /// <summary>

@@ -1003,9 +1003,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: -0.649, z: -0.259}
   m_LocalScale: {x: 0.6, y: 1, z: 1}
-  m_Children:
-  - {fileID: 8554706395648239930}
-  - {fileID: 8554706395876384591}
+  m_Children: []
   m_Father: {fileID: 6303072832438601796}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3891,94 +3889,6 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!1 &8554706395648239931
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8554706395648239930}
-  - component: {fileID: 8554706395648239909}
-  m_Layer: 3
-  m_Name: Boxis Gloves Right
-  m_TagString: Untagged
-  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8554706395648239930
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8554706395648239931}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.928, y: 0.778, z: 1.446}
-  m_LocalScale: {x: 1.6666665, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1736468788910247477}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &8554706395648239909
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8554706395648239931}
-  m_Material: {fileID: 13400000, guid: 4aeee75b02ccade4b84491f54b0dd7b1, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.27749252
-  m_Center: {x: 0.010087093, y: -5.408691e-16, z: -0.16306025}
---- !u!1 &8554706395876384588
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8554706395876384591}
-  - component: {fileID: 8554706395876384590}
-  m_Layer: 3
-  m_Name: Boxis Gloves Left
-  m_TagString: Untagged
-  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8554706395876384591
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8554706395876384588}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.858, y: 0.724, z: 1.346}
-  m_LocalScale: {x: 1.6666665, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1736468788910247477}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &8554706395876384590
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8554706395876384588}
-  m_Material: {fileID: 13400000, guid: 4aeee75b02ccade4b84491f54b0dd7b1, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.28261283
-  m_Center: {x: 0, y: -6.996399e-16, z: -0.17423275}
 --- !u!1 &8836076304758038061
 GameObject:
   m_ObjectHideFlags: 0
@@ -4243,15 +4153,12 @@ MonoBehaviour:
   _MovementAnimation:
     movementAcceleration: 1
     movementDeceleration: 3
-    movementVelocity: 0
   _JumpAnimation:
     jumpAcceleration: 1
     jumpDeceleration: 1
-    jumpVelocity: 0
   _SlideAnimation:
     slideAcceleration: 1
     slideDeceleration: 1
-    slideVelocity: 0
 --- !u!1 &9087711858309030517
 GameObject:
   m_ObjectHideFlags: 0
