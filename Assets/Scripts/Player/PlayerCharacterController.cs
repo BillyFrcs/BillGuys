@@ -145,7 +145,7 @@ namespace Player
                
                if (playerRb.velocity.y < 0f)
                {
-                    playerRb.velocity += Vector3.up * (Physics.gravity.y * _gravityMultiplier * Time.deltaTime);
+                    playerRb.AddForce(Vector3.up * (Physics.gravity.y * _gravityMultiplier * Time.fixedDeltaTime), ForceMode.Impulse);
                }
           }
 
