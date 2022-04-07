@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   testAllModes:
     name: Test in ${{ matrix.testMode }}
-    runs-on: windows-latest
+    runs-on: windows64-latest
     strategy:
       fail-fast: false
       matrix:
