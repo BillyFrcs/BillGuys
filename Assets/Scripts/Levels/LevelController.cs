@@ -45,7 +45,7 @@ namespace Levels
 
             if (_doorAnimation)
             {
-                gameObject.transform.DOMoveY(transform.position.y + 2.6f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
+                gameObject.transform.DOMoveY(transform.position.y + 2.5f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
             }
 
             if (_rotatorUpAnimation)
@@ -55,7 +55,7 @@ namespace Levels
 
             if (_droneAnimation)
             {
-                gameObject.transform.DOMoveY(transform.position.y + 1f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
+                gameObject.transform.DOMoveY(transform.position.y + 1.0f, _position * 1.0f, false).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Flash);
             }
         }
     }

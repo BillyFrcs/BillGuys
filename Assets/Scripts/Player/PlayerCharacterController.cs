@@ -471,7 +471,7 @@ namespace Player
                          PlayerAnimation.Instance.JumpAnimation(_isJumpPressed);
                          PlayerAnimation.Instance.SlideAnimation(_canDoubleJump);
 
-                         if (_jumpCount >= 2)
+                         if (_jumpCount == 2)
                          {
                               _jumpCount = Zero;
 
@@ -647,7 +647,7 @@ namespace Player
                          
                          playerRb.isKinematic = true;
                          
-                         StartCoroutine(DieCoroutine(1.0f));
+                         Invoke(nameof(DieTimer), 1.0f);
 
                          PlayerAnimation.Instance.DieAnimation();
 
@@ -663,13 +663,9 @@ namespace Player
           /// <summary>
           /// Die timer to respawn player
           /// </summary>
-          /// <param name="timer">timer to spawn (float)</param>
-          /// <returns>WaitForSeconds(timer)</returns>
-          private static IEnumerator DieCoroutine(float timer)
+          private void DieTimer()
           {
-               yield return new WaitForSeconds(timer);
-               
-               SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+               SceneManager.LoadScene(SceneManager.GetActiveScene().name);
           }
      }
 }

@@ -2891,7 +2891,7 @@ MonoBehaviour:
   _rotatorUpAnimation: 0
   _rotate: 2
   _rotatorUp: 2
-  _position: 3
+  _position: 2
 --- !u!1 &533876115
 GameObject:
   m_ObjectHideFlags: 0
@@ -5185,7 +5185,7 @@ MonoBehaviour:
   _doorAnimation: 0
   _droneAnimation: 0
   _rotatorUpAnimation: 0
-  _rotate: 4
+  _rotate: 2
   _rotatorUp: 2
   _position: 2
 --- !u!1 &1044950816
@@ -6125,7 +6125,7 @@ MonoBehaviour:
   _rotatorUpAnimation: 0
   _rotate: 2
   _rotatorUp: 2
-  _position: 1
+  _position: 2
 --- !u!4 &1328344593
 Transform:
   m_ObjectHideFlags: 0
@@ -6961,8 +6961,8 @@ MonoBehaviour:
   _doorAnimation: 0
   _droneAnimation: 0
   _rotatorUpAnimation: 1
-  _rotate: 3
-  _rotatorUp: 5
+  _rotate: 2
+  _rotatorUp: 2
   _position: 2
 --- !u!1 &1533065736
 GameObject:
@@ -7224,8 +7224,8 @@ MonoBehaviour:
   _doorAnimation: 0
   _droneAnimation: 0
   _rotatorUpAnimation: 1
-  _rotate: 3
-  _rotatorUp: 5
+  _rotate: 2
+  _rotatorUp: 2
   _position: 2
 --- !u!1 &1738245870
 GameObject:
@@ -8778,7 +8778,7 @@ MonoBehaviour:
   _doorAnimation: 0
   _droneAnimation: 0
   _rotatorUpAnimation: 0
-  _rotate: 4
+  _rotate: 2
   _rotatorUp: 2
   _position: 2
 --- !u!54 &2041727915
@@ -9012,7 +9012,7 @@ MonoBehaviour:
   _doorAnimation: 0
   _droneAnimation: 0
   _rotatorUpAnimation: 0
-  _rotate: 4
+  _rotate: 2
   _rotatorUp: 2
   _position: 2
 --- !u!1 &2110498945
