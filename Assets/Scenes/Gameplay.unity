@@ -638,7 +638,7 @@ GameObject:
   - component: {fileID: 66138976}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -948,7 +948,7 @@ GameObject:
   - component: {fileID: 124244740}
   m_Layer: 0
   m_Name: Plane.007
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1333,7 +1333,7 @@ GameObject:
   - component: {fileID: 201222474}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1530,7 +1530,7 @@ GameObject:
   - component: {fileID: 226908688}
   m_Layer: 0
   m_Name: Circle.003
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2773,7 +2773,7 @@ GameObject:
   - component: {fileID: 386502252}
   m_Layer: 0
   m_Name: Plane.003
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6165,7 +6165,7 @@ GameObject:
   - component: {fileID: 1132988894}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7812,7 +7812,7 @@ GameObject:
   - component: {fileID: 1548095297}
   m_Layer: 0
   m_Name: Door Dash Wall Crash 2
-  m_TagString: Door Dash Wall 2
+  m_TagString: Untagged
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7878,7 +7878,7 @@ GameObject:
   - component: {fileID: 1612218738}
   m_Layer: 0
   m_Name: Circle.003
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8065,7 +8065,7 @@ GameObject:
   - component: {fileID: 1675469405}
   m_Layer: 0
   m_Name: Plane.007
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8462,7 +8462,7 @@ GameObject:
   - component: {fileID: 1752421908}
   m_Layer: 0
   m_Name: Door Dash Wall Crash 1
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10129,7 +10129,7 @@ GameObject:
   - component: {fileID: 2060336497}
   m_Layer: 0
   m_Name: Plane.003
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10352,7 +10352,7 @@ GameObject:
   - component: {fileID: 2095141451}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Door Dash Wall 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19333,10 +19333,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1776970750433612879, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: m_Mass
-      value: 50
-      objectReference: {fileID: 0}
     - target: {fileID: 8625910204539944429, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -19380,14 +19376,6 @@ PrefabInstance:
     - target: {fileID: 8625910204539944429, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9006833175832651606, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: _maxJumpTime
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 9006833175832651606, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
-      propertyPath: _maxJumpHeight
-      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9006833175832651607, guid: b2388c89c6ce0da46b89e7be8f16b186, type: 3}
       propertyPath: m_Name

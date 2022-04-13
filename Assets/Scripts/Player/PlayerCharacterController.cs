@@ -141,13 +141,13 @@ namespace Player
                PlayerMovement();
                
                // Calculate fast fall of player gravity
-               /*if (!TryGetComponent(out Rigidbody playerRb)) 
+               if (!TryGetComponent(out Rigidbody playerRb)) 
                     return;
                
                if (playerRb.velocity.y < 0f)
                {
                     playerRb.AddForce(Vector3.up * (Physics.gravity.y * _gravityMultiplier * Time.fixedDeltaTime), ForceMode.Impulse);
-               }*/
+               }
           }
 
           private void OnEnable()
@@ -528,9 +528,9 @@ namespace Player
 
           private void OnCollisionEnter(Collision collision)
           {
-               PlayerGetHit(collision);
-
                var playerRb = collision.collider.attachedRigidbody;
+               
+               PlayerCharacterGetHit(collision, playerRb);
 
                if (playerRb == null)
                     return;
@@ -575,10 +575,9 @@ namespace Player
           /// Add force while player's character get hit with obstacles
           /// </summary>
           /// <param name="collision">Collision</param>
-          private void PlayerGetHit(Collision collision)
+          /// <param name="playerRb">Rigidbody</param>
+          private void PlayerCharacterGetHit(Collision collision, Rigidbody playerRb)
           {
-               Rigidbody playerRb = collision.collider.attachedRigidbody;
-
                // Force with all obstacle
                if (playerRb != null)
                {
@@ -596,27 +595,12 @@ namespace Player
           private void AppliedForce(Collision collision, Rigidbody playerRb)
           {
               Vector3 forceDirection = collision.transform.position - gameObject.transform.position;
-
+              
               forceDirection.y = (float)Zero;
-
-              forceDirection.Normalize();
-
-              playerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
-          }
-
-          /// <summary>
-          /// Applied force affect to obstacles 
-          /// </summary>
-          /// <param name="colliderInfo">Collider info</param>
-          public void AppliedForce(Collider colliderInfo)
-          {
-              Vector3 forceDirection = colliderInfo.transform.position - gameObject.transform.position;
-
-              forceDirection.y = (float)Zero;
-
+              
               forceDirection.Normalize();
               
-              _PlayerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
+              playerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
           }
 
           /// <summary>
@@ -624,9 +608,9 @@ namespace Player
           /// </summary>
           /// <returns>bool (Physics.Raycast)</returns>
           private Boolean IsGrounded()
-          {
+          { 
                Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
-
+               
                return Physics.Raycast(_PlayerRb.transform.position, Vector3.down, _distanceToTheGround + 0.1F);
           }
 

@@ -7,8 +7,6 @@ TagManager:
   - Wall
   - Slide
   - Rotator
-  - Door Dash Wall 1
-  - Door Dash Wall 2
   layers:
   - Default
   - TransparentFX

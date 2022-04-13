@@ -4175,7 +4175,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9006833175832651607}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 50
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -4211,7 +4211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 250
   _rotationSpeed: 15
-  _maxJumpHeight: 1
+  _maxJumpHeight: 6
   _maxJumpTime: 0.75
   _gravityMultiplier: 4.5
   _forceMagnitude: 5

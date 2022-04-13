@@ -60,8 +60,6 @@ namespace Levels
             {
                 DestroyDoorDashWall();
 
-                _PlayerCharacterController.AppliedForce(other);
-
                 Debug.Log($"Force: {gameObject.name}"); // DEBUG
             }
         }
