@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -46,6 +47,20 @@ MonoBehaviour:
   _SoundEffects:
   - name: Jump
     Clip: {fileID: 8300000, guid: d46cd123a64043a49a6c6a8d7a02a9e0, type: 3}
+    Mixer: {fileID: 24300002, guid: 8b320074990f2044e8f12c92ea26196a, type: 2}
+    volume: 1
+    pitch: 1
+    canLoop: 0
+    SoundEffectsSource: {fileID: 0}
+  - name: Slide
+    Clip: {fileID: 8300000, guid: 3f510bb8d687b4341bafdce99ba6d53c, type: 3}
+    Mixer: {fileID: 24300002, guid: 8b320074990f2044e8f12c92ea26196a, type: 2}
+    volume: 1
+    pitch: 1
+    canLoop: 0
+    SoundEffectsSource: {fileID: 0}
+  - name: Kick
+    Clip: {fileID: 8300000, guid: e67b20671fcf8d0479bb62da269d3f29, type: 3}
     Mixer: {fileID: 24300002, guid: 8b320074990f2044e8f12c92ea26196a, type: 2}
     volume: 1
     pitch: 1

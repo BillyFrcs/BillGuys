@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Helpers.Tags;
+using Levels;
 #if ENABLE_INPUT_SYSTEM
 using Player.InputSystem;
 #endif
@@ -140,13 +141,13 @@ namespace Player
                PlayerMovement();
                
                // Calculate fast fall of player gravity
-               if (!TryGetComponent(out Rigidbody playerRb)) 
+               /*if (!TryGetComponent(out Rigidbody playerRb)) 
                     return;
                
                if (playerRb.velocity.y < 0f)
                {
                     playerRb.AddForce(Vector3.up * (Physics.gravity.y * _gravityMultiplier * Time.fixedDeltaTime), ForceMode.Impulse);
-               }
+               }*/
           }
 
           private void OnEnable()
@@ -495,7 +496,7 @@ namespace Player
                     // _PlayerCharacterMovementVelocity.y = (previousYVelocity + _CurrentMovement.y) * 0.5F;
 
                     // Optional to applied movement with max value
-                    _PlayerCharacterMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5f, -20.0f);
+                    _PlayerCharacterMovementVelocity.y = Mathf.Max((previousYVelocity + _CurrentMovement.y) * 0.5F, -20.0F);
                     
                     // Debug.Log($"{gameObject.name} is falling!"); // DEBUG
                }
@@ -534,7 +535,7 @@ namespace Player
                if (playerRb == null)
                     return;
                
-               if (playerRb.gameObject.CompareTag(TagsManager.Rotator))
+               if (playerRb.gameObject.CompareTag(TagManager.Rotator))
                {
                     _PlayerRagDoll.ActivateRagDollCharacter();
                     
@@ -578,18 +579,44 @@ namespace Player
           {
                Rigidbody playerRb = collision.collider.attachedRigidbody;
 
+               // Force with all obstacle
                if (playerRb != null)
                {
-                    Vector3 forceDirection = collision.transform.position - gameObject.transform.position;
+                   AppliedForce(collision, playerRb);
 
-                    forceDirection.y = (float)Zero;
-
-                    forceDirection.Normalize();
-
-                    playerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
-
-                    // Debug.Log($"Force {gameObject.name}"); // DEBUG
+                   Debug.Log("Force obstacle"); // DEBUG
                }
+          }
+
+          /// <summary>
+          /// Applied force affect to obstacles 
+          /// </summary>
+          /// <param name="collision">Collision info</param>
+          /// <param name="playerRb">Player's Rigidbody</param>
+          private void AppliedForce(Collision collision, Rigidbody playerRb)
+          {
+              Vector3 forceDirection = collision.transform.position - gameObject.transform.position;
+
+              forceDirection.y = (float)Zero;
+
+              forceDirection.Normalize();
+
+              playerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
+          }
+
+          /// <summary>
+          /// Applied force affect to obstacles 
+          /// </summary>
+          /// <param name="colliderInfo">Collider info</param>
+          public void AppliedForce(Collider colliderInfo)
+          {
+              Vector3 forceDirection = colliderInfo.transform.position - gameObject.transform.position;
+
+              forceDirection.y = (float)Zero;
+
+              forceDirection.Normalize();
+              
+              _PlayerRb.AddForceAtPosition(forceDirection.normalized * _forceMagnitude, transform.position, ForceMode.Impulse);
           }
 
           /// <summary>
@@ -598,9 +625,9 @@ namespace Player
           /// <returns>bool (Physics.Raycast)</returns>
           private Boolean IsGrounded()
           {
+               Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
+
                return Physics.Raycast(_PlayerRb.transform.position, Vector3.down, _distanceToTheGround + 0.1F);
-               
-               // Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
           }
 
           /// <summary>

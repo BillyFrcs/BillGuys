@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0.3232659, y: -0.00000007186669, z: 0.000000024550193, w: 0.9463082}
   m_LocalPosition: {x: -4.6440506, y: -3.8999977, z: 3.0482786}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6064233186655815289}
   m_RootOrder: 0
@@ -196,6 +197,7 @@ Transform:
   m_LocalRotation: {x: 0.3232651, y: 0, z: 0, w: 0.9463085}
   m_LocalPosition: {x: 19.595778, y: 3.819136, z: -3.0409548}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6064233186308210641}
   m_Father: {fileID: 0}
@@ -227,7 +229,10 @@ MonoBehaviour:
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
+    ModeOverride: 0
     LensShift: {x: 0, y: 0}
+    GateFit: 2
+    m_SensorSize: {x: 2.2974505, y: 1}
   m_Transitions:
     m_BlendHint: 3
     m_InheritPosition: 1
