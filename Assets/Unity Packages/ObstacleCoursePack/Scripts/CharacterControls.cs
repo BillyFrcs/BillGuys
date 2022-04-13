@@ -180,7 +180,7 @@ public class CharacterControls : MonoBehaviour {
 			yield return null;
 			if (!slide) //Reduce the force if the ground isnt slide
 			{
-				pushForce = pushForce - Time.deltaTime * delta;
+				pushForce -= Time.deltaTime * delta;
 				pushForce = pushForce < 0 ? 0 : pushForce;
 				//Debug.Log(pushForce);
 			}

@@ -515,22 +515,15 @@ namespace Player
           /// </summary>
           private void PlayerAttack()
           {
-              // Player kicking
-              if (_isKickPressed)
-              { 
-                  _isJump = false;
-              }
-              else
-              { 
-                  _isJump = true;
-              }
+               // Player kicking
+               _isJump = !_isKickPressed;
           }
 
           private void OnCollisionEnter(Collision collision)
           {
                var playerRb = collision.collider.attachedRigidbody;
                
-               PlayerCharacterGetHit(collision, playerRb);
+               PlayerHitObstacles(collision, playerRb);
 
                if (playerRb == null)
                     return;
@@ -576,7 +569,7 @@ namespace Player
           /// </summary>
           /// <param name="collision">Collision</param>
           /// <param name="playerRb">Rigidbody</param>
-          private void PlayerCharacterGetHit(Collision collision, Rigidbody playerRb)
+          private void PlayerHitObstacles(Collision collision, Rigidbody playerRb)
           {
                // Force with all obstacle
                if (playerRb != null)
@@ -585,6 +578,14 @@ namespace Player
 
                    Debug.Log("Force obstacle"); // DEBUG
                }
+          }
+
+          /// <summary>
+          /// Forced player with physics when get hit
+          /// </summary>
+          public void PlayerGetHit()
+          {
+               throw new NotImplementedException();
           }
 
           /// <summary>
@@ -609,7 +610,7 @@ namespace Player
           /// <returns>bool (Physics.Raycast)</returns>
           private Boolean IsGrounded()
           { 
-               Debug.DrawRay(_PlayerRb.transform.position, -Vector3.up, Color.blue); // DEBUG RAY
+               Debug.DrawRay(_PlayerRb.transform.position, Vector3.down, Color.blue); // DEBUG RAY
                
                return Physics.Raycast(_PlayerRb.transform.position, Vector3.down, _distanceToTheGround + 0.1F);
           }

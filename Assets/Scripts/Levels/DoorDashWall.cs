@@ -8,15 +8,11 @@ namespace Levels
 {
     public class DoorDashWall : MonoBehaviour
     {
-        [SerializeField] private Rigidbody[] _DoorDashWallRb;
-
-        private PlayerCharacterController _PlayerCharacterController;
-
+        private Rigidbody[] _DoorDashWallRb;
+        
         private void Awake()
         {
             _DoorDashWallRb = GetComponentsInChildren<Rigidbody>();
-
-            _PlayerCharacterController = FindObjectOfType<PlayerCharacterController>();
         }
 
         // Start is called before the first frame update

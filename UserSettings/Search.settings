@@ -9,7 +9,7 @@ showStatusBar = false
 scopes = {
 	"last_search.8040E7BB" = "Gameplay"
 	"OpenInspectorPreview.8040E7BB" = "0"
-	"currentGroup.8040E7BB" = "all"
+	"currentGroup.8040E7BB" = "_group_provider_Files"
 }
 providers = {
 	adb = {
@@ -54,8 +54,8 @@ providers = {
 	}
 }
 recentSearches = [
-	"G"
 	"S"
+	"G"
 ]
 searchItemFavorites = [
 ]
