@@ -9,21 +9,11 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-variables:
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
 steps:
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
 
 - task: VSBuild@1
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
 
 - task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
